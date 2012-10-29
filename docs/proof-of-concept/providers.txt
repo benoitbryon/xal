@@ -1,0 +1,50 @@
+#########
+Providers
+#########
+
+Available providers:
+
+* directory: filesystem directories
+* file: filesystem files
+* package: system package
+* process
+* service
+* virtualenv
+* buildout 
+* ...
+
+Providers implement an API.
+
+Automatically plug your providers with entry-points.
+Or do it manually via session's registry:
+
+.. code-block:: python
+
+   from xal import LocalSession
+   session = LocalSession()
+
+
+   class HelloWorldProvider(object):
+       def echo(self, who):
+           return self._context.command.echo(who)
+
+   provider = session.registry.register('hello', HelloWorldProvider())
+   session.hello.echo('world!')
+   provider.echo('world!')
+
+
+   def hello(context, who):
+	return context.command.echo(who)
+
+   session.registry.register('hello', hello)
+   session.hello('world!')
+
+Use a specific provider:
+
+.. code-block:: python
+
+   pkg = session.package('python-dev', provider=Aptitude)
+   pkg.install()
+
+   session.registry.use(package='foo.bar.providers.Aptitude')
+   session.package.install('curl')

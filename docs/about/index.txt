@@ -1,0 +1,15 @@
+#########
+About xal
+#########
+
+This section is about the project itself.
+
+.. toctree::
+   :maxdepth: 1
+
+   vision
+   alternatives
+   naming
+   LICENSE
+   AUTHORS
+   CHANGELOG

@@ -1,0 +1,84 @@
+###
+xal
+###
+
+"xal" is a contextual execution framework for Python.
+
+.. warning::
+
+   This project is experimental. Current goal is to implement a
+   proof-of-concept, so that the project can be shown and discussed with
+   community and teams from other projects such as Fabric, Salt or zc.buildout.
+
+   **Proposals focus about API and usage**, implementation comes next.
+
+   At this early stage, even the name "xal" may be changed.
+
+Xal helps you create scripts to manage resources or perform actions on a
+system, independantly from the execution context:
+
+.. doctest::
+
+  >>> def home_directory_exists(session):
+  ...     """Return True if home directory of session's user exists.
+  ...
+  ...     ``session`` argument is the execution context.
+  ...
+  ...     """
+  ...     return session.dir.exists(session.dir.home)
+
+Then create an execution session:
+
+.. note::
+
+   Notice that most of the configuration stuff below is supposed to be done via
+   auto-configuration tools, or via pre-configured sessions. In future releases
+   required code should be reduced:
+
+   .. code-block:: python
+
+      from xal import loading, LOCAL_SESSION
+      session = loading.autoconfigure_session(loading.LOCAL_SESSION)
+
+.. doctest::
+
+  >>> # Create a session with its registry.
+  >>> from xal.session import LocalSession
+  >>> from xal.registry import Registry
+  >>> session = LocalSession(registry=Registry())
+  >>> # The registry contains a mapping of providers attached to interfaces.
+  >>> # So, let's import some providers...
+  >>> from xal.sys.local import LocalSysProvider
+  >>> from xal.client.local import LocalClient
+  >>> from xal.dir.local import LocalDirProvider
+  >>> # ... and map the providers to interfaces.
+  >>> session.registry.register(sys=LocalSysProvider(),
+  ...                           client=LocalClient(),
+  ...                           dir=LocalDirProvider())
+  
+Finally run your scripts in the session:
+
+.. doctest::
+
+  >>> home_directory_exists(session)
+  True
+
+Execution sessions can be local, remote, use Fabric, Salt... The main
+motivation of this library is to provide a common set of tools for sysadmin
+scripts.
+
+Main use case are:
+
+* deployment, provisioning;
+* remote execution;
+* portable execution.
+
+
+**********
+Ressources
+**********
+
+* online documentation: http://xal.readthedocs.org
+* PyPI page: http://pypi.python.org/pypi/xal
+* code repository: https://github.com/benoitbryon/xal
+* bugtracker: https://github.com/benoitbryon/xal/issues

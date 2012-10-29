@@ -1,0 +1,93 @@
+######
+Vision
+######
+
+XAL is a contextual execution framework for Python. Through its contextual
+execution system, it makes a resource abstraction layer possible.
+
+
+********************
+Contextual execution
+********************
+
+In Python, there are several tools to perform actions on the local system. As
+an example, the `subprocess` module makes it possible to run arbitrary shell
+commands. So, let's suppose you wrote a script that echoes "Hello world!" using
+the shell:
+
+.. code-block:: python
+
+   import subprocess
+   subprocess.call(['echo', u'Hello world!'])
+
+Then what if you want to run commands on a remote machine? You can write a
+fabfile:
+
+.. code-block:: python
+
+   from fabric import api as fab_api
+
+   @fab_api.task
+   def hello():
+       fab_api.run(['echo', 'Hello world!'])
+
+Then what if you want to run the command as an admin? With Fabric:
+
+.. code-block:: python
+
+   from fabric import api as fab_api
+
+   @fab_api.task
+   def hello():
+       fab_api.sudo(['echo', 'Hello world!'])
+
+Then what if you want to run the command as a sudoer, on the local machine?
+Fabric doesn't provide a wrapper for that:
+
+.. code-block:: python
+
+   from fabric import api as fab_api
+
+   @fab_api.task
+   def hello():
+       fab_api.local(['sudo', 'echo', 'Hello world!'])
+
+Then what if you want to run it on a Windows machine? You'll have to adapt the
+code.
+
+Then what if you migrate to another deployment tool, such as zc.buildout or
+Salt? You'll have to change the code.
+
+Even with Fabric, we had to write 3 distinct scripts to be able to face all
+situations. As developers, we'd like to write only one function, then pass it
+parameters:
+
+* run on local machine or on remote client;
+* run as current user, as admin/root, or maybe as another user.
+
+That's why xal were created: write portable high-level system scripts.
+
+
+***********
+A framework
+***********
+
+There are so many commands and so many systems... it would be impossible to
+support them all. And even if it was, it would be made of tons of code and
+dependencies. That's the first reason why XAL is a framework:
+
+* focus on the API;
+* allow plugins;
+* keep framework lightweight.
+
+
+************************************
+Fully configurable, no global states
+************************************
+
+XAL is not designed to use global states. XAL registry is entirely
+configurable: you can change providers' mapping, configure providers or write
+custom ones.
+
+However, for convenience, XAL offers some configuration helpers, so that common
+use cases are covered easily.

@@ -1,0 +1,7 @@
+xal
+===
+
+.. toctree::
+   :maxdepth: 4
+
+   xal

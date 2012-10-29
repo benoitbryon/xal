@@ -1,0 +1,134 @@
+#################################
+Alternatives and related projects
+#################################
+
+This document presents other projects that provide similar or complementary
+functionalities. It focuses on differences with xal.
+
+
+********************
+Deployment utilities
+********************
+
+* Puppet
+* Chef
+* salt
+* zc.buildout
+* fabric
+* fabtools
+* collective.hostout
+
+Fabric
+======
+
+Fabric is great for performing simple tasks. When you want to perform complex
+tasks, or when you want to reuse your tasks in several situations, you come to
+reinvent provisioning tools. You'd better use fabric to run buildout recipes
+(and write buildout recipes instead of fabric scripts), or use salt, or use
+monitoring...
+
+Fabtools
+========
+
+Fabtools is a provisioning library for Fabric. One strength is its simplicity.
+But it's also a drawback: it's limited to Fabric (which itself is limited),
+there are not so many "recipes".
+
+Salt
+====
+
+Salt is about remote execution, and via remote execution it can perform
+provisioning.
+
+Salt looks great, but as Chef of Puppet, it's a complete software environment:
+it uses zeromq, requires a server (master) and clients (minions). I mean, for
+simple needs, it's overkill.
+
+As a developer, I like my development environment to keep as simple as
+possible. And I like to isolate my projects from my personal system. I mean
+I'd better install and run salt server on a VM than on my personal computer.
+But in the same time, I can't reproduce a complete production environment, i.e.
+run one VM for salt master, one for the database server, one for the web
+front-end, one for the shared filesystem... Cloud-computing is not the
+definitive solution for me, because I often work offline (and I like it).
+
+So... I'd like to have an alternative to Salt for simple architectures...
+Fabric looks like one. But I currently can't write scripts for both!
+
+I'd like Salt modules (those who execute commands) to be packaged as
+third-party libraries.
+
+I'd like Salt to have a tiny Python client I could install on my personal
+computer and use it as a remote-control for the master (kind of Chef's knife,
+but lighter).
+
+zc.buildout and recipes
+=======================
+
+Recipes for zc.buildout allow you to configure script execution. A recipe have
+install(), update() and uninstall() methods. It's truly powerful on the local
+machine. One strength of zc.buildout is isolation. One limit is that it is not
+really meant to be run as a sudoer. You can, but it introduces some problems.
+Running 2 buildouts, one as a sudoer, and another as a normal user, could solve
+the problem, but then you have to protect yourself against running only one of
+the two.
+
+I'd like to invoke buildout as a sudoer, then, inside buildout configuration,
+switch from one "context" to another, i.e. tell execute this recipe as sudoer,
+this recipe as user "postgres", this one as "myself"...
+
+Another strength of zc.buildout is that it automatically discovers and installs
+some dependencies, such as extensions and recipes. I guess we can't have an
+execution manager that implements all resources or providers, and that there
+would be several candidates for some resources (such as "package"). So it would
+be great if those dependencies where at least automatically discovered. And
+whenever possible, automatically installed. I suppose that discovery could be
+a feature bundled in the project, and installation would be implemented by
+consumers (i.e. buildout, pip, salt...).
+
+***********************
+Subprocess and wrappers
+***********************
+
+* http://pypi.python.org/pypi/commandwrapper
+* http://pypi.python.org/pypi/EasyProcess
+* http://pypi.python.org/pypi/extcmd 
+* http://pypi.python.org/pypi/sarge
+
+subprocess
+==========
+
+When you want to perform simple things, subprocess is a bit complicated, and
+you'd like to have a simplified wrapper.
+
+When you want to perform complex or repetitive tasks, you'd better write
+wrappers for code readability and reusability.
+
+So, imho, in any cases, sharing common wrappers would be useful. That's for
+the execution part.
+
+About the contextual part, suprocess executes commands on the local system
+with the current user, current environment...
+I guess one would appreciate to use the same execution API whatever the
+target system, user, environment...
+
+
+*****
+Other
+*****
+
+os and os.path
+==============
+
+os and os.path are really useful in daily use, especially when you are dealing
+with deployment or sysadmin scripts.
+
+os and os.path provide operating system interfaces. As interfaces, the
+implementation could vary depending on the environment. It currently depends
+on local operating system. I guess one would appreciate if it depends on
+contextual execution environment.
+
+I'm not talking about rewriting os module. I'm talking about a third-party
+provisioner which provides a higher-level interface, but with respect to
+contextual execution environment. The implementation for local system should
+use os.

@@ -1,0 +1,54 @@
+xal Package
+===========
+
+:mod:`xal` Package
+------------------
+
+.. automodule:: xal.__init__
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`provider` Module
+----------------------
+
+.. automodule:: xal.provider
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`registry` Module
+----------------------
+
+.. automodule:: xal.registry
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`resource` Module
+----------------------
+
+.. automodule:: xal.resource
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`session` Module
+---------------------
+
+.. automodule:: xal.session
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Subpackages
+-----------
+
+.. toctree::
+
+    xal.client
+    xal.cmd
+    xal.dir
+    xal.sys
+    xal.user
+

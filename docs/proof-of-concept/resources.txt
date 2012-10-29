@@ -1,0 +1,44 @@
+#########
+Resources
+#########
+
+Use a session to handle resources:
+
+.. code-block:: python
+
+   from xal.session import LocalSession
+   session = LocalSession()
+
+   dir = session.dir  # Shortcut to the provider.
+   foobar = dir.create(dir.join(dir.HOME, 'foo', 'bar', recursive=True))
+   assert(foobar.exists)
+   assert(foobar.status('chmod') is 0755)
+   foobar.delete()
+
+Call to a provider is a resource factory:
+
+.. code-block:: python
+
+   from xal.session import LocalSession
+   session = LocalSession()
+
+   foobar = session.dir(path=session.dir.HOME)
+   assert(foobar.exists)
+   assert(foobar.status('exists'))
+   foobar.chmod('0755')
+
+Create a generic resource then use with any session.
+
+.. code-block:: python
+
+   # Create a generic resource: home_directory.
+   from xal.resources import Dir
+   home_directory = Dir(path=Dir.HOME, mode="755")
+
+   from xal.session import LocalSession
+   session = LocalSession()
+   session_home = session.dir.create(home_directory)
+   # session_home is a resource that belongs to the session.
+   assert(session_home is not home_directory)
+   assert(session_home._session is session)
+   assert(home_directory._session is None)

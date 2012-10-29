@@ -1,0 +1,35 @@
+dir Package
+===========
+
+:mod:`generic` Module
+---------------------
+
+.. automodule:: xal.dir.generic
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`local` Module
+-------------------
+
+.. automodule:: xal.dir.local
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`provider` Module
+----------------------
+
+.. automodule:: xal.dir.provider
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`resource` Module
+----------------------
+
+.. automodule:: xal.dir.resource
+    :members:
+    :undoc-members:
+    :show-inheritance:
+

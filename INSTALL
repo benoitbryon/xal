@@ -1,0 +1,18 @@
+############
+Installation
+############
+
+This code is open-source. See :doc:`/about/LICENSE` for details.
+
+If you want to contribute to the code, you should go to :doc:`/dev`
+documentation.
+
+Install the package with your favorite Python installer. As an example, with
+pip:
+
+.. code-block:: sh
+
+   # Not released yet on PyPI, so use the source...
+   pip install https://github.com/benoitbryon/xal.git#egg=xal
+
+See :doc:`api/modules` for a detailed usage documentation.

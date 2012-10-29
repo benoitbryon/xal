@@ -1,0 +1,23 @@
+.. include:: ../README
+
+********
+Contents
+********
+
+.. toctree::
+   :maxdepth: 2
+
+   proof-of-concept/index
+   install
+   api/modules
+   about/index
+   dev
+
+
+******************
+Indices and tables
+******************
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

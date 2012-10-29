@@ -1,0 +1,18 @@
+################
+Proof of concept
+################
+
+Here are proof-of-concept examples of contextual execution.
+
+.. warning::
+
+   The following features are not currently available! This section only
+   illustrates possibilities.
+
+.. toctree::
+   :maxdepth: 1
+
+   hello-world
+   resources
+   providers
+   monitoring

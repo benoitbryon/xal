@@ -1,0 +1,19 @@
+user Package
+============
+
+:mod:`provider` Module
+----------------------
+
+.. automodule:: xal.user.provider
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`resource` Module
+----------------------
+
+.. automodule:: xal.user.resource
+    :members:
+    :undoc-members:
+    :show-inheritance:
+

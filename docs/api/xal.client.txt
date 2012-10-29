@@ -1,0 +1,19 @@
+client Package
+==============
+
+:mod:`local` Module
+-------------------
+
+.. automodule:: xal.client.local
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`provider` Module
+----------------------
+
+.. automodule:: xal.client.provider
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
