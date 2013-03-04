@@ -1,37 +1,34 @@
 # Makefile for development.
 # See INSTALL and docs/dev.txt for details.
 SHELL = /bin/bash
-PROJECT = 'xal'
 ROOT_DIR = $(shell pwd)
+BIN_DIR = $(ROOT_DIR)/bin
 DATA_DIR = $(ROOT_DIR)/var
-PYTHON = python
+WGET = wget
+PYTHON = $(shell which python)
+BUILDOUT_CFG = $(ROOT_DIR)/etc/buildout.cfg
 BUILDOUT_DIR = $(ROOT_DIR)/lib/buildout
-BUILDOUT_BOOTSTRAP_URL = "https://raw.github.com/buildout/buildout/7a4f6107bfc0d3669f11c7893f2934696af319dc/bootstrap/bootstrap.py"
+BUILDOUT_VERSION = 1.7.0
+BUILDOUT_BOOTSTRAP_URL = https://raw.github.com/buildout/buildout/$(BUILDOUT_VERSION)/bootstrap/bootstrap.py
 BUILDOUT_BOOTSTRAP = $(BUILDOUT_DIR)/bootstrap.py
-BUILDOUT = $(ROOT_DIR)/bin/buildout
-BUILDOUT_ARGS = 
+BUILDOUT_BOOTSTRAP_ARGS = -c $(BUILDOUT_CFG) --version=$(BUILDOUT_VERSION) --distribute buildout:directory=$(ROOT_DIR)
+BUILDOUT = $(BIN_DIR)/buildout
+BUILDOUT_ARGS = -N -c $(BUILDOUT_CFG) buildout:directory=$(ROOT_DIR)
+PROJECT = $(shell $(PYTHON) -c "import setup;print setup.NAME")
 
 
-bootstrap-buildout:
-	# Install zc.buildout.
-	if [ ! -x $(BUILDOUT) ]; then \
-	    mkdir -p $(BUILDOUT_DIR); \
-	    if [ ! -f $(BUILDOUT_BOOTSTRAP) ]; then \
-	        wget $(BUILDOUT_BOOTSTRAP_URL) -O $(BUILDOUT_BOOTSTRAP); \
-	    fi; \
-	    $(PYTHON) $(BUILDOUT_BOOTSTRAP); \
-	fi
-
-
-buildout: bootstrap-buildout
-	# Run zc.buildout.
-	$(BUILDOUT) $(BUILDOUT_ARGS)
+configure:
+	# Configuration is stored in etc/ folder. Not generated yet.
 
 
 develop: buildout
 
 
-update: develop
+buildout:
+	if [ ! -d $(BUILDOUT_DIR) ]; then mkdir -p $(BUILDOUT_DIR); fi
+	if [ ! -f $(BUILDOUT_BOOTSTRAP) ]; then wget -O $(BUILDOUT_BOOTSTRAP) $(BUILDOUT_BOOTSTRAP_URL); fi
+	if [ ! -x $(BUILDOUT) ]; then $(PYTHON) $(BUILDOUT_BOOTSTRAP) $(BUILDOUT_BOOTSTRAP_ARGS); fi
+	$(BUILDOUT) $(BUILDOUT_ARGS)
 
 
 clean:
@@ -48,7 +45,11 @@ maintainer-clean: distclean
 	rm -rf $(ROOT_DIR)/lib/
 
 
-test: documentation
+test: test-documentation
+
+
+test-documentation:
+	bin/nosetests -c $(ROOT_DIR)/etc/nose.cfg sphinxcontrib.testbuild.tests
 
 
 apidoc:

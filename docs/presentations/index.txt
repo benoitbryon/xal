@@ -1,0 +1,9 @@
+#############
+Presentations
+#############
+
+Here are some presentations (slides) about XAL.
+
+.. toctree::
+
+   xal

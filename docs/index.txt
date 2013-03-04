@@ -11,13 +11,5 @@ Contents
    install
    api/modules
    about/index
+   presentations/index
    dev
-
-
-******************
-Indices and tables
-******************
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

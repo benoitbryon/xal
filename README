@@ -29,16 +29,16 @@ system, independantly from the execution context:
 
 Then create an execution session:
 
-.. note::
+.. warning::
 
    Notice that most of the configuration stuff below is supposed to be done via
    auto-configuration tools, or via pre-configured sessions. In future releases
-   required code should be reduced:
+   required code should be reduced to something like this:
 
    .. code-block:: python
 
-      from xal import loading, LOCAL_SESSION
-      session = loading.autoconfigure_session(loading.LOCAL_SESSION)
+      import xal
+      session = xal.local()
 
 .. doctest::
 
@@ -55,7 +55,7 @@ Then create an execution session:
   >>> session.registry.register(sys=LocalSysProvider(),
   ...                           client=LocalClient(),
   ...                           dir=LocalDirProvider())
-  
+
 Finally run your scripts in the session:
 
 .. doctest::

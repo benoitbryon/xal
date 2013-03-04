@@ -1,0 +1,149 @@
+################################
+XAL - execution abstration layer
+################################
+
+Presentation of `XAL <https://github.com/benoitbryon/xal>`_ proof-of-concept,
+by Benoit Bryon.
+
+This work is licensed under a `Creative Commons Attribution 3.0 Unported
+License (CC BY 3.0) <http://creativecommons.org/licenses/by/3.0/>`_
+
+-------------------------------------------------------------------------------
+
+Python for sysadmins
+====================
+
+Python is great:
+
+* shell, scripts, provisioners, frameworks...
+* runs on almost any system
+
+**But...**
+
+-------------------------------------------------------------------------------
+
+It's hard to write and share portable scripts
+=============================================
+
+* environment vary: users, packages...
+* provisioners are overkill: just want a shell or a simple script
+* libraries are divided: fabric, buildout, salt...
+
+-------------------------------------------------------------------------------
+
+Develop to XAL session
+======================
+
+Write a script which takes a XAL session as argument:
+
+.. code-block:: python
+
+   def write_greetings(session):
+       """Write 'Hello world!' in 'greetings.txt' file relative to user's home."""
+       home = session.user.home
+       file_path = session.file.join(home, 'greetings.txt')
+       file_resource = session.file(file_path)
+       if not file_resource.exists():
+           file_resource.write('Hello world!')
+
+-------------------------------------------------------------------------------
+
+Fabric
+======
+
+Use it in a fabfile:
+
+.. code-block:: python
+
+   from fabric.api import task
+   import write_greetings
+   import xal
+
+   @task
+   def hello_fabric():
+       session = xal.fabric(sudoer=True)
+       write_hello_world(session)
+
+-------------------------------------------------------------------------------
+
+zc.buildout
+===========
+
+In a buildout recipe:
+
+.. code-block:: python
+
+   import write_greetings
+   import xal
+
+   class HelloBuildout(object):
+       def __init__(self, buildout, name, options):
+           self.session = xal.buildout(buildout, name, options)
+
+       def install(self):
+           write_hello_world(self.session)
+
+       def update(self)
+           pass
+
+-------------------------------------------------------------------------------
+
+Salt
+====
+
+As a salt module:
+
+.. code-block:: python
+
+   import write_greetings
+   import xal
+
+   def hello_salt():
+       session = xal.salt(__salt__)
+       write_greetings(session)
+
+-------------------------------------------------------------------------------
+
+Shell
+=====
+
+In an interactive shell:
+
+.. code-block:: python
+
+   import write_greetings
+   import xal
+   session = xal.local()
+   write_greeting(session)
+
+-------------------------------------------------------------------------------
+
+Resources
+=========
+
+XAL session is a proxy to resources:
+
+* files, directories,
+* users,
+* processes,
+* packages,
+* your own customized resources...
+
+-------------------------------------------------------------------------------
+
+Share and reuse scripts!
+========================
+
+* Reduced cost of change
+* Enhanced collaboration between projects related to deployment
+
+=> What about scripts fabric, buildout, salt... can share on PyPI?
+
+-------------------------------------------------------------------------------
+
+XAL is a proof of concept
+=========================
+
+* https://github.com/benoitbryon/xal
+* feedback is welcome!
+* are popular projects interested in?
