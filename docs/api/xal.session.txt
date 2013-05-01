@@ -1,0 +1,19 @@
+session Package
+===============
+
+:mod:`session` Package
+----------------------
+
+.. automodule:: xal.session
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`local` Module
+-------------------
+
+.. automodule:: xal.session.local
+    :members:
+    :undoc-members:
+    :show-inheritance:
+

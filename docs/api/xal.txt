@@ -33,14 +33,6 @@ xal Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`session` Module
----------------------
-
-.. automodule:: xal.session
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Subpackages
 -----------
 
@@ -49,6 +41,8 @@ Subpackages
     xal.client
     xal.cmd
     xal.dir
+    xal.pkg
+    xal.session
     xal.sys
     xal.user
 

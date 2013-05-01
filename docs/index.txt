@@ -1,5 +1,6 @@
 .. include:: ../README
 
+
 ********
 Contents
 ********
@@ -8,8 +9,9 @@ Contents
    :maxdepth: 2
 
    proof-of-concept/index
+   faq
    install
-   api/modules
+   api/index
    about/index
    presentations/index
-   dev
+   contribute/index

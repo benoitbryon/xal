@@ -29,32 +29,11 @@ system, independantly from the execution context:
 
 Then create an execution session:
 
-.. warning::
-
-   Notice that most of the configuration stuff below is supposed to be done via
-   auto-configuration tools, or via pre-configured sessions. In future releases
-   required code should be reduced to something like this:
-
-   .. code-block:: python
-
-      import xal
-      session = xal.local()
-
 .. doctest::
 
-  >>> # Create a session with its registry.
-  >>> from xal.session import LocalSession
-  >>> from xal.registry import Registry
-  >>> session = LocalSession(registry=Registry())
-  >>> # The registry contains a mapping of providers attached to interfaces.
-  >>> # So, let's import some providers...
-  >>> from xal.sys.local import LocalSysProvider
-  >>> from xal.client.local import LocalClient
-  >>> from xal.dir.local import LocalDirProvider
-  >>> # ... and map the providers to interfaces.
-  >>> session.registry.register(sys=LocalSysProvider(),
-  ...                           client=LocalClient(),
-  ...                           dir=LocalDirProvider())
+  >>> # Using a factory to create a session with pre-configured registry.
+  >>> from xal.session.local import Session
+  >>> session = Session()
 
 Finally run your scripts in the session:
 
@@ -78,5 +57,6 @@ Main use case are:
 Ressources
 **********
 
-* code repository: https://github.com/benoitbryon/xal
-* bugtracker: https://github.com/benoitbryon/xal/issues
+* Documentation: https://xal.readthedocs.org
+* Code repository: https://github.com/benoitbryon/xal
+* Bugtracker: https://github.com/benoitbryon/xal/issues

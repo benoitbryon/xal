@@ -1,6 +1,6 @@
-###########################
-Contributing to the project
-###########################
+#################
+Contributor guide
+#################
 
 This document provides guidelines for people who want to contribute to the
 project.
@@ -88,9 +88,7 @@ Test and build
 Use `the Makefile`_.
 
 
-**********
-References
-**********
+.. rubric:: References
 
 .. target-notes::
 

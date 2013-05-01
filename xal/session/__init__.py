@@ -30,9 +30,3 @@ class Session(object):
     def is_local(self):
         """Return True if session is on local system, i.e. False if remote."""
         raise NotImplementedError()
-
-
-class LocalSession(Session):
-    """A session on local machine."""
-    is_local = True
-    """LocalSession is related to local machine."""

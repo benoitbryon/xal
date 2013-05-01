@@ -1,5 +1,0 @@
-***************
-Why "xal" name?
-***************
-
-"xal" stands for "eXecution Abstraction Layer".
