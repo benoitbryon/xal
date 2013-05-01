@@ -32,8 +32,8 @@ Then create an execution session:
 .. doctest::
 
   >>> # Using a factory to create a session with pre-configured registry.
-  >>> from xal.session.local import Session
-  >>> session = Session()
+  >>> from xal.session.local import LocalSession
+  >>> session = LocalSession()
 
 Finally run your scripts in the session:
 

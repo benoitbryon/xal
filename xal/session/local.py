@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """Local XAL sessions."""
-import xal.session
+from xal.session import Session
 
 
-class Session(xal.session.Session):
+class LocalSession(Session):
     """A session on local machine."""
     #: LocalSession is related to local machine.
     is_local = True
@@ -13,7 +13,7 @@ class Session(xal.session.Session):
         # Initialize registry.
         from xal.registry import Registry
         registry = kwargs.setdefault('registry', Registry())
-        super(Session, self).__init__(registry)
+        super(LocalSession, self).__init__(registry)
 
         # Let's import providers then register them to interfaces.
         from xal.sys.local import LocalSysProvider
