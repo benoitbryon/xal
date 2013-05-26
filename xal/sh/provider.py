@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Base stuff for providers that handle commands."""
-from xal.cmd.resource import Cmd
+from xal.sh.resource import ShCommand
 from xal.provider import ResourceProvider
 
 
@@ -8,11 +8,10 @@ class CommandNotFound(Exception):
     """Command not found."""
 
 
-class CmdProvider(ResourceProvider):
+class ShProvider(ResourceProvider):
     """Base class for command provider."""
-    def __init__(self, session, resource_factory=Cmd):
-        super(CmdProvider, self).__init__(session=session,
-                                          resource_factory=resource_factory)
+    def __init__(self, resource_factory=ShCommand):
+        super(ShProvider, self).__init__(resource_factory=resource_factory)
 
     def run(self, command, *args):
         raise NotImplementedError()

@@ -1,18 +1,10 @@
-pkg Package
-===========
-
-:mod:`generic` Module
----------------------
-
-.. automodule:: xal.pkg.generic
-    :members:
-    :undoc-members:
-    :show-inheritance:
+sh Package
+==========
 
 :mod:`local` Module
 -------------------
 
-.. automodule:: xal.pkg.local
+.. automodule:: xal.sh.local
     :members:
     :undoc-members:
     :show-inheritance:
@@ -20,7 +12,7 @@ pkg Package
 :mod:`provider` Module
 ----------------------
 
-.. automodule:: xal.pkg.provider
+.. automodule:: xal.sh.provider
     :members:
     :undoc-members:
     :show-inheritance:
@@ -28,7 +20,7 @@ pkg Package
 :mod:`resource` Module
 ----------------------
 
-.. automodule:: xal.pkg.resource
+.. automodule:: xal.sh.resource
     :members:
     :undoc-members:
     :show-inheritance:

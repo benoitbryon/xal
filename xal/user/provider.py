@@ -6,9 +6,8 @@ from xal.user.resource import User
 
 class UserProvider(ResourceProvider):
     """Base class for operating system users."""
-    def __init__(self, session, resource_factory=User):
-        super(UserProvider, self).__init__(session=session,
-                                           resource_factory=resource_factory)
+    def __init__(self, resource_factory=User):
+        super(UserProvider, self).__init__(resource_factory=resource_factory)
 
     @property
     def current(self):

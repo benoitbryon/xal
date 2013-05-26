@@ -8,9 +8,9 @@ class Provider(object):
     A XAL provider implements an API related to some environment actions.
 
     """
-    def __init__(self, session=None):
+    def __init__(self):
         """Constructor."""
-        self.session = session
+        self.session = None
         """XAL session instance in which the provider is registered.
 
         Providers can use this instance internally to get information about the
@@ -33,9 +33,9 @@ class Provider(object):
 
 class ResourceProvider(Provider):
     """Provider specialized for a specific kind of resource."""
-    def __init__(self, session=None, resource_factory=None):
+    def __init__(self, resource_factory=None):
         """Constructor."""
-        super(ResourceProvider, self).__init__(session)
+        super(ResourceProvider, self).__init__()
         self.resource_factory = resource_factory
         """Resource factory: could a class or a callable."""
 
@@ -48,4 +48,6 @@ class ResourceProvider(Provider):
         u'Hello world!'
 
         """
-        return self.resource_factory(self, *args, **kwargs)
+        resource = self.resource_factory(*args, **kwargs)
+        resource.session = self.session
+        return resource

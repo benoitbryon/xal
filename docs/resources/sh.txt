@@ -1,0 +1,118 @@
+###########
+sh commands
+###########
+
+XAL provides an interface to run shell commands through ``sh``.
+
+.. tip:: With a local session, XAL is a convenient subprocess wrapper.
+
+
+***************************
+Differences with subprocess
+***************************
+
+XAL's ``sh`` interface is made to run ``sh`` commands in a session.
+Think of the commands **always** run with ``sh -c``.
+Whereas Python's subprocess sets ``shell=False`` by default.
+
+This postulate influence design. XAL's sh interface helps you create and run
+commands through ``sh``: pipes, redirects...
+
+
+************************************
+"sh" provider in session's registry
+************************************
+
+Let's start with a local session:
+
+.. doctest::
+
+   >>> from xal.session.local import LocalSession
+   >>> session = LocalSession()
+
+By default, in ``LocalSession``, "sh" provider is
+``xal.sh.local.LocalShProvider``:
+
+.. doctest::
+
+   >>> session.registry.default('sh')  # Doctest: +ELLIPSIS
+   <xal.sh.local.LocalShProvider object at 0x...>
+
+For convenience, we will set ``sh`` as a shortcut for ``session.sh``:
+
+.. doctest::
+
+   >>> sh = session.sh
+
+
+**********************
+The ShCommand resource
+**********************
+
+The ``sh`` interface can be used to create
+:py:class:`xal.sh.resource.ShCommand` resources:
+
+.. doctest::
+
+   >>> sh("echo -n 'Hello world!'")  # Doctest: +ELLIPSIS
+   <xal.sh.resource.ShCommand object at 0x...>
+
+Command resources are not executed automatically once created.
+Of course, you can run them!
+Command resources are callables.
+When called, they return a :py:class:`xal.sh.resource.ShResult` instance:
+
+.. doctest::
+
+   >>> command = sh("echo -n 'Hello world!'")
+   >>> result = command()
+   >>> result  # Doctest: +ELLIPSIS
+   <xal.sh.resource.ShResult object at 0x...>
+   >>> result.stdout
+   'Hello world!'
+   >>> result.return_code
+   0
+   >>> result.succeeded
+   True
+
+Command constructor accepts strings or iterables:
+
+.. doctest::
+
+   >>> sh("echo -n 'Hello world!'")().stdout
+   'Hello world!'
+   >>> sh(["echo", "-n", "Hello world!"])().stdout
+   'Hello world!'
+
+The ``sh`` interface has a ``run()`` shortcut that creates and runs ``Cmd``
+instances:
+
+.. doctest::
+
+   >>> sh.run("echo -n 'Hello world!'").stdout
+   'Hello world!'
+   >>> sh.run(["echo", "-n", "Hello world!"]).stdout
+   'Hello world!'
+   >>> command = sh("echo -n 'Hello world!'")
+   >>> sh.run(command).stdout
+   'Hello world!'
+
+
+*****
+Pipes
+*****
+
+You can create and handle pipes, they are commands too:
+
+.. doctest::
+
+   >>> echo = sh("echo -e 'hello\nworld'")
+   >>> grep = sh("grep 'world'")
+   >>> piped = echo.pipe(grep)
+   >>> piped().stdout
+   'world\n'
+   >>> piped = echo | grep
+   >>> piped().stdout
+   'world\n'
+   >>> sh.run(echo | grep).stdout
+   'world\n'

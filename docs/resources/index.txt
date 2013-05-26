@@ -1,0 +1,32 @@
+#########
+Resources
+#########
+
+Resources are representations of system resources, such as files, processes...
+One of XAL's main purpose is to define a consistent set of resources with a
+reference API.
+
+Implementation of resources is not XAL's main scope. XAL focuses on API.
+That said, as a proof of concept, XAL implements some resource providers for
+use with a local session.
+
+
+********
+Builtins
+********
+
+Here are a list of builtin resources.
+
+.. toctree::
+   :titlesonly:
+
+   sh
+
+
+****************
+Work in progress
+****************
+
+The resources above are the ones currently implemented in XAL. Since XAL is not
+mature yet, many resources have not been implemented yet. Discover more planned
+features in :doc:`/proof-of-concept/index`.

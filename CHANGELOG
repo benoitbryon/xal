@@ -5,7 +5,9 @@ Changelog
 0.1 (unreleased)
 ----------------
 
+- Proof of concept implementation of ``sh`` interface, with a basic
+  implementation for local session based on subprocess.
+- Proof of concept implementation of ``dir`` interface, with a basic
+  implementation for local session based on Python builtins (os, os.path, ...).
 - Introduced contextual execution architecture: session, registry, providers,
   resources, client.
-- Proof of concept implementation of Dir resource, with DirProvider interface
-  and LocalDirProvider implementation based on Python standard library.

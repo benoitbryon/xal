@@ -6,8 +6,8 @@ from xal.dir.resource import Dir
 
 class DirProvider(ResourceProvider):
     """Base class for filesystem directories."""
-    def __init__(self, session=None, resource_factory=Dir):
-        super(DirProvider, self).__init__(session)
+    def __init__(self, resource_factory=Dir):
+        super(DirProvider, self).__init__(resource_factory=resource_factory)
 
     @property
     def home(self):

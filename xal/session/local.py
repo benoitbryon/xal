@@ -24,3 +24,6 @@ class LocalSession(Session):
 
         from xal.dir.local import LocalDirProvider
         self.registry.register(dir=LocalDirProvider())
+
+        from xal.sh.local import LocalShProvider
+        self.registry.register(sh=LocalShProvider())

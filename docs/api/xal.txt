@@ -39,10 +39,9 @@ Subpackages
 .. toctree::
 
     xal.client
-    xal.cmd
     xal.dir
-    xal.pkg
     xal.session
+    xal.sh
     xal.sys
     xal.user
 

@@ -4,9 +4,9 @@
 
 class Resource(object):
     """Base class for XAL resources."""
-    def __init__(self, session=None):
+    def __init__(self):
         """Constructor."""
-        self.session = session
+        self.session = None
         """Execution context which the resource belongs to."""
         self.diagnosis_methods = ['exists']
         """List of internal methods that provides diagnosis information."""

@@ -24,7 +24,10 @@ class Session(object):
 
     def __getattr__(self, name):
         """Return the provider identified by name, using internal registry."""
-        return self.registry.default(name)
+        try:
+            return self.registry.default(name)
+        except KeyError:
+            raise KeyError("'{name}' is not in registry.".format(name=name))
 
     @property
     def is_local(self):

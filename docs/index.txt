@@ -8,9 +8,10 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   proof-of-concept/index
    faq
    install
+   resources/index
+   proof-of-concept/index
    api/index
    about/index
    presentations/index
