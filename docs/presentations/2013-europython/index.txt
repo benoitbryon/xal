@@ -9,7 +9,7 @@ Florence, Italy <https://ep2013.europython.eu/>`_.
   https://github.com/benoitbryon/xal/raw/master/docs/presentations/2013-europython/poster.pdf
 
 * Sources:
-  https://github.com/benoitbryon/xal/docs/presentations/2013-europython
+  https://github.com/benoitbryon/xal/tree/master/docs/presentations/2013-europython
 
 
 ********
