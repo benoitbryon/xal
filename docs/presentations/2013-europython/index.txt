@@ -1,0 +1,214 @@
+###
+xal
+###
+
+This document contains contents of xal poster session at `EuroPython 2013 in
+Florence, Italy <https://ep2013.europython.eu/>`_.
+
+* Poster as PDF:
+  https://github.com/benoitbryon/xal/raw/master/docs/presentations/2013-europython/poster.pdf
+
+* Sources:
+  https://github.com/benoitbryon/xal/docs/presentations/2013-europython
+
+
+********
+Abstract
+********
+
+XAL is a proof of concept designed to write high-level scripts you can reuse
+within various tools such as Fabric, zc.buildout, Salt…
+
+Python has strong features for sysadmin scripts: portability, a shell and great
+libraries. But, currently, you develop using tool’s specific implementation. As
+a consequence, users of each project develop different tools that do similar
+things.
+
+XAL proposes a new approach for system-related scripts: develop to a session.
+Write scripts that get a session as argument. That session is an abstraction
+layer for system resources such as files, users, packages… It is just like an
+ORM abstracts the database implementation. This design makes it possible to
+share sysadmin scripts that you can use within all those great Python tools
+related to system and deployment. Reduced cost of change and improved
+collaboration!
+
+This poster will present the concepts of XAL. This project is a
+proof-of-concept, so the author will be glad to get feedback, discuss the ideas
+and, if you are interested in, sprint on it!
+
+
+***
+xal
+***
+
+xal
+  execution abstraction layer
+  for high-level system scripts
+
+
+********************
+Develop to a session
+********************
+
+.. code:: python
+
+   def greetings(session):
+       """Write 'Hello world!' in 'greetings.txt' file relative to user's home."""
+       home = session.user.home
+       file_path = session.file.join(home, u'greetings.txt')
+       file_resource = session.file(file_path)
+       with file_resource.open('w'):
+           file_resource.write(u'Hello world!')
+
+
+.. raw:: pdf
+
+   PageBreak
+
+***************
+Run it anywhere
+***************
+
+Shell
+=====
+
+In an interactive shell:
+
+.. code:: pycon
+
+   >>> from europython import greetings
+   >>> import xal
+   >>> session = xal.LocalSession()
+   >>> greetings(session)
+
+Fabric
+======
+
+In a fabfile:
+
+.. code:: python
+
+   from europython import greetings
+   import xal
+
+   def hello_fabric():
+       session = xal.FabricSession(sudoer=True)
+       greetings(session)
+
+
+zc.buildout
+===========
+
+In a buildout recipe:
+
+.. code:: python
+
+   from europython import greetings
+   import xal
+
+   class HelloBuildout(object):
+       def __init__(self, buildout, name, options):
+           self.session = xal.BuildoutSession(buildout, name, options)
+
+       def install(self):
+           greetings(self.session)
+
+Salt
+====
+
+In a salt module:
+
+.. code:: python
+
+   from europython import greetings
+   import xal
+
+   def hello_salt():
+       session = xal.SaltSession(__salt__)
+       greetings(session)
+
+
+***************
+Share libraries
+***************
+
+xal enables wider cooperation in Python community
+
+
+*********************
+Improve your workflow
+*********************
+
+* Do not wait for full provisioning stack, enter your project ASAP
+* First focus on what your script does
+* Then configure execution environment
+* Build the provisioning stack incrementally
+* Change provisioner, keep deployment recipes
+
+*****************************
+Exit the subprocess labyrinth
+*****************************
+
+* subprocess
+* async_subprocess
+* chut
+* clom
+* Command
+* commandwrapper
+* cpopen
+* desub
+* EasyProcess
+* envoy
+* execute
+* extcmd
+* extproc
+* gevent_subprocess
+* iterpipes
+* pbs
+* pipeline
+* pyutilib.subprocess
+* sarge
+* seminode.utils.command
+* sh
+* shellout
+* spur
+* subwrap
+* ... and more...
+* ... and maybe yours
+
+Could xal help APIs converge?
+
+
+**********
+Challenges
+**********
+
+* xal needs strong APIs:
+
+  * run commands (subprocess wrapper)
+  * consistent set of resources (files, users...)
+
+  => PEPs?
+
+* Efficient and comprehensive session registry
+* Preconfigured registries: fabric, salt, buildout, local session...
+* Resolution of session's dependencies
+* Smart handling of NotImplementedError
+* Unit tests with mocks, integration tests
+
+
+*************************
+xal is a proof of concept
+*************************
+
+https://xal.readthedocs.org
+
+
+****************
+Credits, license
+****************
+
+xal is released under BSD license
+|copy| 2012-2013, Benoît Bryon
+
+.. |copy| unicode:: 0xA9 .. copyright sign

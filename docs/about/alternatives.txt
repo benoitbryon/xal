@@ -6,6 +6,14 @@ This document presents other projects that provide similar or complementary
 functionalities. It focuses on differences with xal.
 
 
+**********
+Interfaces
+**********
+
+* `spur`_ runs commands and manipulate files locally or over SSH using the same
+  interface.
+
+
 ********************
 Deployment utilities
 ********************
@@ -90,11 +98,6 @@ consumers (i.e. buildout, pip, salt...).
 Subprocess and wrappers
 ***********************
 
-* http://pypi.python.org/pypi/commandwrapper
-* http://pypi.python.org/pypi/EasyProcess
-* http://pypi.python.org/pypi/extcmd 
-* http://pypi.python.org/pypi/sarge
-
 subprocess
 ==========
 
@@ -112,6 +115,31 @@ with the current user, current environment...
 I guess one would appreciate to use the same execution API whatever the
 target system, user, environment...
 
+Wrappers
+========
+
+* chut
+* async_subprocess
+* pyutilib.subprocess
+* gevent_subprocess
+* EasyProcess
+* sarge
+* seminode.utils.command
+* Command
+* commandwrapper
+* desub
+* extcmd
+* iterpipes
+* pbs
+* pipeline
+* sh
+* subwrap
+* cpopen
+* shellout
+* clom
+* envoy
+* extproc
+* execute
 
 *****
 Other
@@ -137,3 +165,5 @@ use os.
 .. rubric:: References
 
 .. target-notes::
+
+.. _`spur`: https://pypi.python.org/pypi/spur/

@@ -5,5 +5,7 @@ Presentations
 Here are some presentations (slides) about XAL.
 
 .. toctree::
+   :titlesonly:
 
-   xal
+   Generic lightning-talk <xal>
+   Poster session at EuroPython 2013 <2013-europython/index>
