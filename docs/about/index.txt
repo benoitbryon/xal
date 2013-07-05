@@ -11,4 +11,3 @@ This section is about the project itself.
    license
    authors
    changelog
-   naming

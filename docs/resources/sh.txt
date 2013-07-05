@@ -15,7 +15,7 @@ XAL's ``sh`` interface is made to run ``sh`` commands in a session.
 Think of the commands **always** run with ``sh -c``.
 Whereas Python's subprocess sets ``shell=False`` by default.
 
-This postulate influence design. XAL's sh interface helps you create and run
+This postulate influences design. XAL's sh interface helps you create and run
 commands through ``sh``: pipes, redirects...
 
 
@@ -49,7 +49,7 @@ For convenience, we will set ``sh`` as a shortcut for ``session.sh``:
 The ShCommand resource
 **********************
 
-The ``sh`` interface can be used to create
+The ``sh`` interface can be used as a factory to create
 :py:class:`xal.sh.resource.ShCommand` resources:
 
 .. doctest::
@@ -58,8 +58,7 @@ The ``sh`` interface can be used to create
    <xal.sh.resource.ShCommand object at 0x...>
 
 Command resources are not executed automatically once created.
-Of course, you can run them!
-Command resources are callables.
+You have to run them explicitely. They are callables.
 When called, they return a :py:class:`xal.sh.resource.ShResult` instance:
 
 .. doctest::
@@ -95,6 +94,16 @@ instances:
    'Hello world!'
    >>> command = sh("echo -n 'Hello world!'")
    >>> sh.run(command).stdout
+   'Hello world!'
+
+You can create a resource for later use in one or several sessions:
+
+.. doctest::
+
+   >>> hello = sh("echo -n 'Hello world!'")
+   >>> from xal.session.local import LocalSession
+   >>> session = LocalSession()
+   >>> session.sh.run(hello).stdout
    'Hello world!'
 
 

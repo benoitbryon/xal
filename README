@@ -2,20 +2,25 @@
 xal
 ###
 
-"xal" is a contextual execution framework for Python.
+Xal is a contextual execution framework for Python.
+"xal" is the acronym of "eXecution Abstraction Layer".
 
 .. warning::
 
    This project is experimental. Current goal is to implement a
-   proof-of-concept, so that the project can be shown and discussed with
-   community and teams from other projects such as Fabric, Salt or zc.buildout.
+   proof-of-concept that can be shown to, discussed with or tried by users of
+   tools like subprocess, Fabric, zc.buildout, Salt...
 
-   **Proposals focus about API and usage**, implementation comes next.
+Xal helps you create scripts to perform actions on a system, like managing
+non-Python resources, independantly from the execution context.
 
-   At this early stage, even the name "xal" may be changed.
 
-Xal helps you create scripts to manage resources or perform actions on a
-system, independantly from the execution context:
+*******
+Example
+*******
+
+Let's create a xal-compatible function. It takes the execution context as input
+argument:
 
 >>> def home_directory_exists(session):
 ...     """Return True if home directory of session's user exists.
@@ -25,28 +30,25 @@ system, independantly from the execution context:
 ...     """
 ...     return session.dir.exists(session.dir.home)
 
-Then create an execution session:
+Then create an execution session. The ``LocalSession`` used here is a
+pre-configured registry:
 
->>> # Using a factory to create a session with pre-configured registry.
 >>> from xal.session.local import LocalSession
 >>> session = LocalSession()
 
-Finally run your scripts in the session:
+Finally run the function in the session:
 
 >>> home_directory_exists(session)
 True
 
 The main motivation of this library is about sharing system scripts:
 
-* scripts are written with session as argument;
+* scripts are written with session as argument, they use an high-level abstract
+  API;
+
 * sessions can be created for use in various environments: local Python shell,
-  Fabric, Salt...
-
-Main use cases are:
-
-* deployment, provisioning;
-* remote execution;
-* portable execution.
+  Fabric, Salt... Sessions are registries ; they encapsulate API
+  implementation.
 
 
 **********

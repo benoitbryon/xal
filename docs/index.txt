@@ -10,7 +10,6 @@ Contents
 
    install
    resources/index
-   proof-of-concept/index
    api/index
    about/index
    presentations/index
