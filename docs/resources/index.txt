@@ -17,16 +17,15 @@ Builtins
 
 Here are a list of builtin resources.
 
+.. warning::
+
+   Work in progress!
+   
+   The resources below are the ones currently implemented in XAL. Since XAL is
+   not mature yet, many resources have not been implemented yet. Learn more
+   about planned features in :doc:`/proof-of-concept/index`.
+
 .. toctree::
    :titlesonly:
 
    sh
-
-
-****************
-Work in progress
-****************
-
-The resources above are the ones currently implemented in XAL. Since XAL is not
-mature yet, many resources have not been implemented yet. Discover more planned
-features in :doc:`/proof-of-concept/index`.

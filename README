@@ -36,11 +36,13 @@ Finally run your scripts in the session:
 >>> home_directory_exists(session)
 True
 
-Execution sessions can be local, remote, use Fabric, Salt... The main
-motivation of this library is to provide a common set of tools for sysadmin
-scripts.
+The main motivation of this library is about sharing system scripts:
 
-Main use case are:
+* scripts are written with session as argument;
+* sessions can be created for use in various environments: local Python shell,
+  Fabric, Salt...
+
+Main use cases are:
 
 * deployment, provisioning;
 * remote execution;
@@ -52,6 +54,7 @@ Ressources
 **********
 
 * Documentation: https://xal.readthedocs.org
+* PyPI: https://pypi.python.org/pypi/xal
 * Code repository: https://github.com/benoitbryon/xal
 * Bugtracker: https://github.com/benoitbryon/xal/issues
 * Continuous integration: https://travis-ci.org/benoitbryon/xal
