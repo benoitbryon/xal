@@ -7,7 +7,7 @@ from setuptools import setup
 here = os.path.abspath(os.path.dirname(__file__))
 
 NAME = 'xal'
-DESCRIPTION = """Execution abstraction layer."""
+DESCRIPTION = """Execution abstraction layer for high-level system scripts."""
 README = open(os.path.join(here, 'README')).read()
 VERSION = open(os.path.join(here, 'VERSION')).read().strip()
 PACKAGES = [NAME]

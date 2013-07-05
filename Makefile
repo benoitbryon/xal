@@ -46,7 +46,12 @@ maintainer-clean: distclean
 	rm -rf $(ROOT_DIR)/lib/
 
 
-test: test-documentation
+test: test-app test-documentation
+
+
+test-app:
+	$(NOSE) -c $(ROOT_DIR)/etc/nose.cfg --with-coverage --cover-package=xal tests
+	mv $(ROOT_DIR)/.coverage $(ROOT_DIR)/var/test/app.coverage
 
 
 test-documentation:

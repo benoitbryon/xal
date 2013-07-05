@@ -17,30 +17,24 @@ xal
 Xal helps you create scripts to manage resources or perform actions on a
 system, independantly from the execution context:
 
-.. doctest::
-
-  >>> def home_directory_exists(session):
-  ...     """Return True if home directory of session's user exists.
-  ...
-  ...     ``session`` argument is the execution context.
-  ...
-  ...     """
-  ...     return session.dir.exists(session.dir.home)
+>>> def home_directory_exists(session):
+...     """Return True if home directory of session's user exists.
+...
+...     ``session`` argument is the execution context.
+...
+...     """
+...     return session.dir.exists(session.dir.home)
 
 Then create an execution session:
 
-.. doctest::
-
-  >>> # Using a factory to create a session with pre-configured registry.
-  >>> from xal.session.local import LocalSession
-  >>> session = LocalSession()
+>>> # Using a factory to create a session with pre-configured registry.
+>>> from xal.session.local import LocalSession
+>>> session = LocalSession()
 
 Finally run your scripts in the session:
 
-.. doctest::
-
-  >>> home_directory_exists(session)
-  True
+>>> home_directory_exists(session)
+True
 
 Execution sessions can be local, remote, use Fabric, Salt... The main
 motivation of this library is to provide a common set of tools for sysadmin
