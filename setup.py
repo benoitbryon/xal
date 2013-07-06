@@ -13,9 +13,11 @@ VERSION = open(os.path.join(here, 'VERSION')).read().strip()
 PACKAGES = [NAME]
 REQUIREMENTS = ['setuptools']
 ENTRY_POINTS = {}
-CLASSIFIERS = ['Programming Language :: Python',
-               'License :: OSI Approved :: BSD License',
-               'Development Status :: 1 - Planning']
+CLASSIFIERS = ['License :: OSI Approved :: BSD License',
+               'Development Status :: 1 - Planning',
+               'Intended Audience :: Developers',
+               'Programming Language :: Python :: 2.6',
+               'Programming Language :: Python :: 2.7']
 
 
 if __name__ == '__main__':  # Don't run setup() when we import this module.
