@@ -2,7 +2,7 @@
 Resources
 #########
 
-Xal resources are Python representations of system resources, such as files,
+Xal resources are Python representations of system resources such as files,
 processes... One of xal's main purpose is to define a consistent set of
 resources with a reference API.
 

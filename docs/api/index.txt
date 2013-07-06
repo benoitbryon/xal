@@ -4,6 +4,10 @@ API
 
 Here is API documentation, generated from code.
 
+.. note::
+
+   Narrative documentation is located in :doc:`/resources/index` section.
+
 .. include:: modules.txt
 
 .. toctree::
