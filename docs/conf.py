@@ -31,8 +31,11 @@ import re
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = [
-    'sphinx.ext.doctest',
     'sphinx.ext.autodoc',
+    'sphinx.ext.autosummary',
+    'sphinx.ext.doctest',
+    'sphinx.ext.coverage',
+    'sphinx.ext.intersphinx',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -50,7 +53,7 @@ master_doc = 'index'
 # General information about the project.
 project = u'xal'
 project_slug = re.sub(r'([\w_.-]+)', u'-', project)
-copyright = u'2012-2013, Benoît Bryon'
+copyright = u'2012-2015, Benoît Bryon'
 author = u'Benoît Bryon'
 author_slug = re.sub(r'([\w_.-]+)', u'-', author)
 
@@ -186,6 +189,13 @@ html_sidebars = {
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = u'{project}doc'.format(project=project_slug)
+
+
+# -- Options for sphinx.ext.intersphinx ---------------------------------------
+
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/2.7', None),
+}
 
 
 # -- Options for LaTeX output --------------------------------------------------

@@ -1,4 +1,9 @@
 recursive-include xal *
 global-exclude *.pyc
-include *.txt
-include AUTHORS CHANGELOG INSTALL LICENSE README VERSION
+include AUTHORS
+include CHANGELOG
+include CONTRIBUTING.rst
+include INSTALL
+include LICENSE
+include README.rst
+include VERSION

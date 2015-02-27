@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Base stuff for XAL providers."""
 
 
@@ -36,16 +35,16 @@ class ResourceProvider(Provider):
     def __init__(self, resource_factory=None):
         """Constructor."""
         super(ResourceProvider, self).__init__()
+
+        #: Resource factory. Typically a class, but could be any callable.
         self.resource_factory = resource_factory
-        """Resource factory: could a class or a callable."""
 
     def __call__(self, *args, **kwargs):
-        """Resource factory.
+        """Return resource created with :attr:`resource_factory`.
 
-        >>> from xal.provider import ResourceProvider
-        >>> p = ResourceProvider(resource_factory=unicode)
-        >>> p('Hello world'!)
-        u'Hello world!'
+        Proxy ``args`` and ``kwargs`` to :attr:`resource_factory`.
+
+        Register ``session`` attribute to resource.
 
         """
         resource = self.resource_factory(*args, **kwargs)

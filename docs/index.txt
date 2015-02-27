@@ -1,4 +1,4 @@
-.. include:: ../README
+.. include:: ../README.rst
 
 
 ********
@@ -10,7 +10,6 @@ Contents
 
    install
    resources/index
-   api/index
    about/index
    presentations/index
-   contribute/index
+   contributing

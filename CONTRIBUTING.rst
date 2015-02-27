@@ -44,7 +44,7 @@ System requirements:
      You may use `Virtualenv`_ to make sure the active ``python`` is the right
      one.
 
-* make and wget to use the provided :file:`Makefile`.
+* make and wget to use the provided `Makefile`.
 
 Execute:
 
@@ -62,23 +62,15 @@ contains to your needs.
 The Makefile
 ************
 
-A :file:`Makefile` is provided to ease development. Use it to:
+A `Makefile` is provided to ease development. Use it to:
 
 * setup the development environment: ``make develop``
 * update it, as an example, after a pull: ``make update``
 * run tests: ``make test``
 * build documentation: ``make documentation``
 
-The :file:`Makefile` is intended to be a live reference for the development
+The `Makefile` is intended to be a live reference for the development
 environment.
-
-
-*************
-Documentation
-*************
-
-Follow `style guide for Sphinx-based documentations`_ when editing the
-documentation.
 
 
 **************
@@ -94,7 +86,5 @@ Use `the Makefile`_.
 
 .. _`bugtracker`: 
    https://github.com/benoitbryon/xal/issues
-.. _`Python`: http://python.org
-.. _`Virtualenv`: http://virtualenv.org
-.. _`style guide for Sphinx-based documentations`:
-   http://documentation-style-guide-sphinx.readthedocs.org/
+.. _`Python`: https://www.python.org
+.. _`Virtualenv`: https://virtualenv.pypa.io/en/latest/

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Base stuff for XAL resources."""
 
 
@@ -6,10 +5,11 @@ class Resource(object):
     """Base class for XAL resources."""
     def __init__(self):
         """Constructor."""
+        #: Execution context which the resource belongs to.
         self.session = None
-        """Execution context which the resource belongs to."""
+
+        #: List of internal methods that provides diagnosis information.
         self.diagnosis_methods = ['exists']
-        """List of internal methods that provides diagnosis information."""
 
     def exists(self):
         """Return True if the resource exists in current execution context."""

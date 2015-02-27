@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-"""Execution abstraction layer."""
+"""XAL a.k.a. eXecution Abstraction Layer."""
 import pkg_resources
 
 #: Module version, as defined in :pep:`396`.
