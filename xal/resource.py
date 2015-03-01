@@ -6,10 +6,10 @@ class Resource(object):
     def __init__(self):
         """Constructor."""
         #: Execution context which the resource belongs to.
-        self.session = None
+        self.xal_session = None
 
         #: List of internal methods that provides diagnosis information.
-        self.diagnosis_methods = ['exists']
+        self.xal_diagnosis_methods = ['exists']
 
     def exists(self):
         """Return True if the resource exists in current execution context."""
@@ -22,7 +22,7 @@ class Resource(object):
 
         """
         diagnosis = {}
-        for name in self.diagnosis_methods:
+        for name in self.xal_diagnosis_methods:
             method = getattr(self, name)
             diagnosis[name] = method()
         return diagnosis

@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
-"""Base stuff for providers that handle filesystem directories."""
+"""Base stuff for providers that handle filesystem."""
 from xal.provider import ResourceProvider
-from xal.dir.resource import Dir
+from xal.fs.resource import FileSystem
 
 
-class DirProvider(ResourceProvider):
-    """Base class for filesystem directories."""
-    def __init__(self, resource_factory=Dir):
-        super(DirProvider, self).__init__(resource_factory=resource_factory)
+class FileSystemProvider(ResourceProvider):
+    """Base class for filesystems."""
+    def __init__(self, resource_factory=FileSystem):
+        super(FileSystemProvider, self).__init__(
+            resource_factory=resource_factory)
 
     @property
     def home(self):

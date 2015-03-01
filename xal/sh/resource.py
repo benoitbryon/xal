@@ -21,8 +21,8 @@ class ShCommand(Resource):
     def __call__(self, session=None):
         """Run the command in ``session`` (defaults to :py:attr:`session`)."""
         if session is not None:
-            self.session = session
-        return self.session.sh.run(self)
+            self.xal_session = session
+        return self.xal_session.sh.run(self)
 
     @property
     def command(self):
@@ -30,7 +30,7 @@ class ShCommand(Resource):
 
     def pipe(self, other):
         pipe = ShPipe([self, other], stdin=self.stdin, stdout=other.stdout)
-        pipe.session = self.session
+        pipe.xal_session = self.xal_session
         return pipe
 
     def __or__(self, other):

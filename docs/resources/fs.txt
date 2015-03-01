@@ -1,0 +1,55 @@
+############################
+Paths, files and directories
+############################
+
+`xal` provides an interface to browse directories and manage files.
+
+
+*******************************************
+"filesystem" provider in session's registry
+*******************************************
+
+Let's start with a local session:
+
+.. doctest::
+
+   >>> from xal.session.local import LocalSession
+   >>> session = LocalSession()
+
+By default, in ``LocalSession``, "fs" provider is
+:class:`xal.fs.local.LocalFileSystemProvider`:
+
+.. doctest::
+
+   >>> session.registry.default('fs')  # Doctest: +ELLIPSIS
+   <xal.fs.local.LocalFileSystemProvider object at 0x...>
+
+For convenience, we will set ``fs`` as a shortcut for ``session.fs``:
+
+.. doctest::
+
+   >>> fs = session.fs
+
+
+************************
+Navigating in filesystem
+************************
+
+.. doctest::
+
+   >>> path = fs.cwd()
+   >>> path.exists
+   True
+   >>> path.name == 'docs'
+   True
+   >>> path.is_dir()
+   True
+   >>> path.is_file()
+   False
+   >>> with fs.cd('resources') as sub_path:
+   ...     sub_path.parent == path
+   True
+   >>> fs.cd('..')  # Doctest: +ELLIPSIS
+   <xal.fs.resource.FileSystem object at 0x...>
+   >>> fs.cwd() == path
+   True

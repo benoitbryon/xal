@@ -60,6 +60,10 @@ if IS_PYTHON2:
 ENTRY_POINTS = {}
 TEST_REQUIREMENTS = ['tox']
 CMDCLASS = {'test': Tox}
+EXTRA_REQUIREMENTS = {
+    'test': TEST_REQUIREMENTS,
+    'ssh': ['fabric'],
+}
 
 
 if __name__ == '__main__':  # Do not run setup() when we import this module.
@@ -81,4 +85,5 @@ if __name__ == '__main__':  # Do not run setup() when we import this module.
         entry_points=ENTRY_POINTS,
         tests_require=TEST_REQUIREMENTS,
         cmdclass=CMDCLASS,
+        extras_require=EXTRA_REQUIREMENTS,
     )

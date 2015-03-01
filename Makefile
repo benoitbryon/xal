@@ -19,8 +19,7 @@ help:
 
 #: develop - Install minimal development utilities.
 develop:
-	$(PIP) install tox
-	$(PIP) install -e .
+	$(PIP) install -e .[ssh,test]
 
 
 #: clean - Basic cleanup, mostly temporary files.

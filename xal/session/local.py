@@ -16,14 +16,16 @@ class LocalSession(Session):
         super(LocalSession, self).__init__(registry)
 
         # Let's import providers then register them to interfaces.
-        from xal.sys.local import LocalSysProvider
-        self.registry.register(sys=LocalSysProvider())
-
         from xal.client.local import LocalClient
-        self.registry.register(client=LocalClient())
-
         from xal.dir.local import LocalDirProvider
-        self.registry.register(dir=LocalDirProvider())
-
+        from xal.fs.local import LocalFileSystemProvider
         from xal.sh.local import LocalShProvider
-        self.registry.register(sh=LocalShProvider())
+        from xal.sys.local import LocalSysProvider
+
+        self.registry.register(
+            client=LocalClient(),
+            dir=LocalDirProvider(),
+            fs=LocalFileSystemProvider(),
+            sh=LocalShProvider(),
+            sys=LocalSysProvider(),
+        )

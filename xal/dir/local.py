@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Implementation of local filesystem directories management.
 
 Mostly wrappers around Python builtins: os, os.path, shutil...
@@ -13,7 +12,7 @@ class LocalDirProvider(DirProvider):
     """Local directory management."""
     @property
     def home(self):
-        if self.session.sys.is_posix:
+        if self.xal_session.sys.is_posix:
             try:
                 home = os.environ['HOME']
             except KeyError:
