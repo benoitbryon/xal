@@ -22,6 +22,7 @@ Here are resources provided by xal itself.
 .. toctree::
    :titlesonly:
 
+   fs
    sh
 
 .. rubric:: References

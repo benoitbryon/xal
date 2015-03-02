@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """XAL local client."""
 from xal.client.provider import Client
 

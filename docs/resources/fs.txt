@@ -1,0 +1,55 @@
+############################
+Paths, files and directories
+############################
+
+`xal` provides an interface to browse directories and manage files.
+
+
+************************
+Navigating in filesystem
+************************
+
+Here is a function that demonstrate some features of `xal`'s filesystem API:
+
+.. doctest::
+
+   >>> def demonstrate_fs(session):
+   ...     """Create, use then delete a demo directory."""
+   ... 	   fs = session.fs  # Convenient shortcut.
+   ...     path_1 = fs.mkdir('test-fs')
+   ...     path_2 = fs.cd('test-fs')
+   ...     assert path_1 == path_2
+   ...     assert fs.cwd() == path_2
+   ...     assert path_1.exists is True
+   ...     assert path_1.is_dir() is True
+   ...     assert path_1.is_file() is False
+   ...     path_1.rm()
+   ...     assert not path_1.exists
+
+   
+*****
+Local
+*****
+
+Let's execute demo function above in local session:
+
+.. doctest::
+
+   >>> from xal.session.local import LocalSession
+   >>> session = LocalSession()
+   >>> demonstrate_fs(session)
+
+
+****************
+SSH using Fabric
+****************
+
+Let's do the same over SSH using Fabric!
+
+.. doctest::
+
+   >>> from xal.session.fabric import FabricSession
+   >>> session = FabricSession()
+   >>> session.client.connect(user='benoit', host='localhost')
+   True
+   >>> demonstrate_fs(session)

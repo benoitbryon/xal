@@ -35,7 +35,7 @@ class Registry(Provider):
     def register(self, **kwargs):
         """Add one or several providers to the registry."""
         for key, provider in kwargs.items():
-            provider.session = self.session
+            provider.xal_session = self.xal_session
             name = self.get_provider_name(provider)
             try:
                 self.items[key][name] = provider
@@ -68,7 +68,7 @@ class Registry(Provider):
         """
         for name, provider in self.items[interface].items():
             try:
-                is_supported = provider.supports(self.session)
+                is_supported = provider.supports(self.xal_session)
             except AttributeError:  # Occurs when provider is a function.
                 is_supported = True
             if is_supported:

@@ -11,17 +11,17 @@ class Dir(Resource):
 
     @property
     def basename(self):
-        return self.session.dir.basename(self.path)
+        return self.xal_session.dir.basename(self.path)
 
     def create(self, recursive=True):
         if not self.exists:
-            self.session.dir.mkdir(self.path, recursive)
-        self.session.dir.chmod(self.path, self.mode)
+            self.xal_session.dir.mkdir(self.path, recursive)
+        self.xal_session.dir.chmod(self.path, self.mode)
         return self
 
     @property
     def exists(self):
-        return self.session.dir.exists(self.path)
+        return self.xal_session.dir.exists(self.path)
 
     def status(self):
         return {'exists': self.exists}

@@ -9,17 +9,18 @@ class Provider(object):
     """
     def __init__(self):
         """Constructor."""
-        self.session = None
-        """XAL session instance in which the provider is registered.
+        #: XAL session instance in which the provider is registered.
+        #:
+        #: Providers can use this instance internally to get information about
+        #: the context or to interact with the environment through other
+        #: providers.
+        self.xal_session = None
 
-        Providers can use this instance internally to get information about the
-        context or to interact with the environment through other providers.
-
-        """
-        self.name = '%s:%s/%s' % (self.__class__.__module__,
-                                  self.__class__.__name__,
-                                  id(self))
-        """Provider name. May be used in registry."""
+        #: Provider name. May be used in registry.
+        self.xal_name = '{module_name}:{class_name}/{instance_id}'.format(
+            module_name=self.__class__.__module__,
+            class_name=self.__class__.__name__,
+            instance_id=id(self))
 
     def __call__(self, *args, **kwargs):
         """Implementation of main shortcut method for resource handler."""
@@ -44,9 +45,9 @@ class ResourceProvider(Provider):
 
         Proxy ``args`` and ``kwargs`` to :attr:`resource_factory`.
 
-        Register ``session`` attribute to resource.
+        Register ``xal_session`` attribute to resource.
 
         """
         resource = self.resource_factory(*args, **kwargs)
-        resource.session = self.session
+        resource.xal_session = self.xal_session  # Attach session to resource.
         return resource
