@@ -35,6 +35,9 @@ class FileSystem(Resource):
     def is_file(self):
         return self.xal_session.fs.is_file(self)
 
+    def mkdir(self, mode=0o777, parents=False):
+        return self.xal_session.fs.mkdir(self, mode=mode, parents=parents)
+
     @property
     def name(self):
         return self.xal_session.fs.name(self)
@@ -45,6 +48,10 @@ class FileSystem(Resource):
 
     def resolve(self):
         return self.xal_session.fs.resolve(self)
+
+    def rm(self):
+        """Delete resource from filesystem (recursively for directories)."""
+        return self.xal_session.fs.rm(self)
 
     def status(self):
         return {'exists': self.exists}

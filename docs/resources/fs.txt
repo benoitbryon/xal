@@ -5,51 +5,51 @@ Paths, files and directories
 `xal` provides an interface to browse directories and manage files.
 
 
-*******************************************
-"filesystem" provider in session's registry
-*******************************************
+************************
+Navigating in filesystem
+************************
 
-Let's start with a local session:
+Here is a function that demonstrate some features of `xal`'s filesystem API:
+
+.. doctest::
+
+   >>> def demonstrate_fs(session):
+   ...     """Create, use then delete a demo directory."""
+   ... 	   fs = session.fs  # Convenient shortcut.
+   ...     path_1 = fs.mkdir('test-fs')
+   ...     path_2 = fs.cd('test-fs')
+   ...     assert path_1 == path_2
+   ...     assert fs.cwd() == path_2
+   ...     assert path_1.exists is True
+   ...     assert path_1.is_dir() is True
+   ...     assert path_1.is_file() is False
+   ...     path_1.rm()
+   ...     assert not path_1.exists
+
+   
+*****
+Local
+*****
+
+Let's execute demo function above in local session:
 
 .. doctest::
 
    >>> from xal.session.local import LocalSession
    >>> session = LocalSession()
+   >>> demonstrate_fs(session)
 
-By default, in ``LocalSession``, "fs" provider is
-:class:`xal.fs.local.LocalFileSystemProvider`:
 
-.. doctest::
+****************
+SSH using Fabric
+****************
 
-   >>> session.registry.default('fs')  # Doctest: +ELLIPSIS
-   <xal.fs.local.LocalFileSystemProvider object at 0x...>
-
-For convenience, we will set ``fs`` as a shortcut for ``session.fs``:
+Let's do the same over SSH using Fabric!
 
 .. doctest::
 
-   >>> fs = session.fs
-
-
-************************
-Navigating in filesystem
-************************
-
-.. doctest::
-
-   >>> path = fs.cwd()
-   >>> path.exists
+   >>> from xal.session.fabric import FabricSession
+   >>> session = FabricSession()
+   >>> session.client.connect(user='benoit', host='localhost')
    True
-   >>> path.name == 'docs'
-   True
-   >>> path.is_dir()
-   True
-   >>> path.is_file()
-   False
-   >>> with fs.cd('resources') as sub_path:
-   ...     sub_path.parent == path
-   True
-   >>> fs.cd('..')  # Doctest: +ELLIPSIS
-   <xal.fs.resource.FileSystem object at 0x...>
-   >>> fs.cwd() == path
-   True
+   >>> demonstrate_fs(session)

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Local XAL sessions."""
 from xal.session import Session
 
