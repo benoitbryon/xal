@@ -7,4 +7,5 @@ env:
 install:
   - make develop
 script:
+  - ./.travis-ssh.sh
   - make test

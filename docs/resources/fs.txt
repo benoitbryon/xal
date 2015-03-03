@@ -50,6 +50,6 @@ Let's do the same over SSH using Fabric!
 
    >>> from xal.session.fabric import FabricSession
    >>> session = FabricSession()
-   >>> session.client.connect(user='benoit', host='localhost')
+   >>> session.client.connect('localhost')
    True
    >>> demonstrate_fs(session)
