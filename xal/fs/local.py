@@ -14,18 +14,26 @@ class LocalFileSystemProvider(FileSystemProvider):
     """Local filesystem manager."""
     def cwd(self):
         """Return resource representing current working directory."""
-        return self(pathlib.Path.cwd())
+        return self(str(pathlib.Path.cwd()))
 
     def cd(self, path):
         """Change current working directory and return new path object."""
         local_path = self.resolve(str(path))
         local_path = pathlib.Path(str(local_path))
+        # Remember initial path, for use at ``__exit__()``.
+        new_path = self(str(local_path))
+        new_path.cwd_backup = self.cwd()
+        # Actually change working directory.
         os.chdir(str(local_path))
-        return self(str(local_path))
+        return new_path
 
     def exists(self, path):
         local_path = pathlib.Path(str(path))
         return local_path.exists()
+
+    def is_absolute(self, path):
+        local_path = pathlib.Path(str(path))
+        return local_path.is_absolute()
 
     def is_dir(self, path):
         local_path = pathlib.Path(str(path))
@@ -34,6 +42,9 @@ class LocalFileSystemProvider(FileSystemProvider):
     def is_file(self, path):
         local_path = pathlib.Path(str(path))
         return local_path.is_file()
+
+    def is_relative(self):
+        return not self.is_absolute()
 
     def mkdir(self, path, mode=0o777, parents=False):
         local_path = self.resolve(str(path))
@@ -47,7 +58,7 @@ class LocalFileSystemProvider(FileSystemProvider):
 
     def parent(self, path):
         local_path = pathlib.Path(path.path)
-        return self(local_path.parent)
+        return self(str(local_path.parent))
 
     def relative_to(self, path, other):
         local_path = pathlib.Path(str(path))

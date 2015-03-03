@@ -5,46 +5,127 @@ Paths, files and directories
 `xal` provides an interface to browse directories and manage files.
 
 
-************************
-Navigating in filesystem
-************************
+******
+fs API
+******
 
-Here is a function that demonstrate some features of `xal`'s filesystem API:
+FileSystem resource
+===================
+
+.. autoclass:: xal.fs.resource.FileSystem
 
 .. doctest::
 
-   >>> def demonstrate_fs(session):
-   ...     """Create, use then delete a demo directory."""
-   ... 	   fs = session.fs  # Convenient shortcut.
-   ...     path_1 = fs.mkdir('test-fs')
-   ...     path_2 = fs.cd('test-fs')
-   ...     assert path_1 == path_2
-   ...     assert fs.cwd() == path_2
-   ...     assert path_1.exists is True
-   ...     assert path_1.is_dir() is True
-   ...     assert path_1.is_file() is False
-   ...     path_1.rm()
-   ...     assert not path_1.exists
+   >>> from xal.fs.resource import FileSystem
+   >>> def demo_resource(session):
+   ...     """Demonstrate use of ``FileSystem`` resource."""
+   ...     fs = session.fs  # Just a shortcut.
+   ...
+   ...     # ``session.fs`` is a resource factory.
+   ...     resource = fs('test-fs')
+   ...     assert isinstance(resource, FileSystem)
+   ...
+   ...     # Just use path as strings.
+   ...     assert str(resource) == 'test-fs'
+   ...
+   ...     # Paths remain relative until they are actually used. Absolute
+   ...     # values are used as soon as filesystem operation is performed.
+   ...     assert resource.is_relative()
+   ...     created_resource = resource.mkdir()
+   ...     assert created_resource.is_absolute()
+   ...     assert resource.is_relative()  # Original value is preserved.
+   ...
+   ...     # Cleanup.
+   ...     fs.rm(created_resource)
 
-   
-*****
+cd
+==
+
+.. automethod:: xal.fs.resource.FileSystem.cd
+
+.. doctest::
+
+   >>> def demo_cd(session):
+   ...     """Demonstrate use of ``cd``."""
+   ... 	   fs = session.fs  # Just a shortcut.
+   ...
+   ...     # Let's create a new directory.
+   ...     path = fs.mkdir('test-fs')
+   ...
+   ...     # Change working directory.
+   ...     initial_path = fs.cwd()
+   ...     assert fs.cwd() != path
+   ...     with fs.cd(path) as sub_path:
+   ...         assert fs.cwd() == path == sub_path
+   ...         assert sub_path.parent == initial_path
+   ...     assert fs.cwd() == initial_path
+   ...
+   ...     # Also works without context manager.
+   ...     # Notice that once used, paths are absolute.
+   ...     rel_path = fs('test-fs')
+   ...     assert rel_path.is_relative()
+   ...     abs_path = rel_path.cd()
+   ...     assert abs_path.is_absolute()
+   ...
+   ...     # Cleanup.
+   ...     fs.cd(initial_path)
+   ...     fs.rm(path)
+
+mkdir
+=====
+
+.. automethod:: xal.fs.resource.FileSystem.mkdir
+
+.. doctest::
+
+   >>> def demo_mkdir(session):
+   ...     """Demonstrate use of ``mkdir``."""
+   ...     fs = session.fs  # Just a shortcut.
+   ...
+   ...     # Let's create a new directory.
+   ...     assert not fs.exists('test-fs')
+   ...     path = fs.mkdir('test-fs')
+   ...     assert fs.exists('test-fs')
+   ...
+   ...     # mkdir() returns absolute path, even if created from relative
+   ...     # value.
+   ...     assert str(path) != 'test-fs'
+   ...     assert path.is_absolute()
+   ...
+   ...     # Cleanup.
+   ...     fs.rm(path)
+
+
+*********
+Providers
+*********
+
 Local
-*****
+=====
 
-Let's execute demo function above in local session:
+Let's execute demo function above in local session.
+
+First setup a local session:
 
 .. doctest::
 
    >>> from xal.session.local import LocalSession
    >>> session = LocalSession()
-   >>> demonstrate_fs(session)
 
+Then run generic code within specific session:
 
-****************
+.. doctest::
+
+   >>> demo_resource(session)
+   >>> demo_cd(session)
+   >>> demo_mkdir(session)
+
 SSH using Fabric
-****************
+================
 
 Let's do the same over SSH using Fabric!
+
+Setup some SSH session:
 
 .. doctest::
 
@@ -52,4 +133,11 @@ Let's do the same over SSH using Fabric!
    >>> session = FabricSession()
    >>> session.client.connect('localhost')
    True
-   >>> demonstrate_fs(session)
+
+Then run generic code within specific session:
+
+.. doctest::
+
+   >>> demo_resource(session)
+   >>> demo_cd(session)
+   >>> demo_mkdir(session)

@@ -10,7 +10,6 @@ class FileSystem(Resource):
         self.cwd_backup = None
 
     def __enter__(self):
-        self.cwd_backup = self.xal_session.fs.cwd()
         return self
 
     def __eq__(self, other):
@@ -19,15 +18,24 @@ class FileSystem(Resource):
         return False
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self.xal_session.fs.cd(self.cwd_backup)
+        if self.cwd_backup:
+            self.xal_session.fs.cd(self.cwd_backup)
         self.cwd_backup = None
 
     def __str__(self):
         return str(self.path)
 
+    def cd(self):
+        """Change working directory."""
+        return self.xal_session.fs.cd(self)
+
     @property
     def exists(self):
         return self.xal_session.fs.exists(self)
+
+    def is_absolute(self):
+        """Return ``True`` if path is absolute."""
+        return self.xal_session.fs.is_absolute(self)
 
     def is_dir(self):
         return self.xal_session.fs.is_dir(self)
@@ -35,7 +43,12 @@ class FileSystem(Resource):
     def is_file(self):
         return self.xal_session.fs.is_file(self)
 
+    def is_relative(self):
+        """Return ``True`` if path is relative."""
+        return not self.is_absolute()
+
     def mkdir(self, mode=0o777, parents=False):
+        """Create directory."""
         return self.xal_session.fs.mkdir(self, mode=mode, parents=parents)
 
     @property
