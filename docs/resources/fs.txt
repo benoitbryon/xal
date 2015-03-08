@@ -116,9 +116,9 @@ Then run generic code within specific session:
 
 .. doctest::
 
-   >>> demo_resource(session)
-   >>> demo_cd(session)
-   >>> demo_mkdir(session)
+   >>> demo_resource(session)  # Doctest: +SKIP
+   >>> demo_cd(session)  # Doctest: +SKIP
+   >>> demo_mkdir(session)  # Doctest: +SKIP
 
 SSH using Fabric
 ================
@@ -131,13 +131,260 @@ Setup some SSH session:
 
    >>> from xal.session.fabric import FabricSession
    >>> session = FabricSession()
-   >>> session.client.connect('localhost')
+   >>> session.client.connect('localhost')  # Doctest: +SKIP
    True
 
 Then run generic code within specific session:
 
 .. doctest::
 
-   >>> demo_resource(session)
-   >>> demo_cd(session)
-   >>> demo_mkdir(session)
+   >>> demo_resource(session)  # Doctest: +SKIP
+   >>> demo_cd(session)  # Doctest: +SKIP
+   >>> demo_mkdir(session)  # Doctest: +SKIP
+
+
+****
+Path
+****
+
+`xal` provides an API inspired by :mod:`pathlib`.
+
+Properties like pathlib.PurePath
+================================
+
+``Path`` instances have properties just like pathlib's pure paths.
+
+Let's consider an example with relative path:
+
+.. doctest::
+
+   >>> from xal.session.local import LocalSession
+   >>> session = LocalSession()
+
+   >>> from xal.fs.resource import Path
+   >>> path = Path('resources')
+   >>> path.xal_session = session
+   >>> path  # Doctest: +ELLIPSIS
+   Path('resources')
+   >>> path.drive
+   ''
+   >>> path.root
+   ''
+   >>> path.anchor
+   ''
+   >>> path.parents
+   (Path('.'),)
+   >>> path.parent
+   Path('.')
+   >>> path.name
+   'resources'
+   >>> path.suffix
+   ''
+   >>> path.suffixes
+   []
+   >>> path.stem
+   'resources'
+
+Let's consider an example with absolute path:
+
+.. doctest::
+
+   >>> path = Path('/home/me/resources')
+   >>> path.xal_session = session
+   >>> path  # Doctest: +ELLIPSIS
+   Path('/home/me/resources')
+   >>> path.drive
+   ''
+   >>> path.root
+   '/'
+   >>> path.anchor
+   '/'
+   >>> path.parents
+   (Path('/home/me'), Path('/home'), Path('/'))
+   >>> path.parent
+   Path('/home/me')
+   >>> path.name
+   'resources'
+   >>> path.suffix
+   ''
+   >>> path.suffixes
+   []
+   >>> path.stem
+   'resources'
+
+Methods like pathlib.PurePath
+=============================
+
+.. doctest::
+
+   >>> path = session.path
+   >>> path('resources') / path('fs.txt')
+   Path('resources/fs.txt')
+
+   >>> print unicode(path('resources'))
+   resources
+   >>> print unicode(path('/home/benoit/resources'))
+   /home/benoit/resources
+
+   >>> print str(path('resources'))
+   resources
+   >>> print str(path('/home/benoit/resources'))
+   /home/benoit/resources
+
+   >>> path('/home/benoit/resources').as_posix()
+   '/home/benoit/resources'
+
+   >>> path('/home/benoit/resources').as_uri()
+   'file:///home/benoit/resources'
+
+   >>> path('resources').is_absolute()
+   False
+
+   >>> path('nul').is_reserved()
+   False
+
+   >>> path('/home').joinpath('resources', path('fs.txt'))
+   Path('/home/resources/fs.txt')
+
+   >>> path('a/b.py').match('*.py')
+   True
+   >>> path('/a/b/c.py').match('b/*.py')
+   True
+   >>> path('/a/b/c.py').match('a/*.py')
+   False
+
+   >>> p = path('/etc/passwd')
+   >>> p.relative_to('/')
+   Path('etc/passwd')
+   >>> p.relative_to('/etc')
+   Path('passwd')
+   >>> p.relative_to('/usr')  # Doctest: +ELLIPSIS
+   Traceback (most recent call last):
+     ...
+   ValueError: '/etc/passwd' does not start with '/usr'
+
+   >>> p = path('/Downloads/pathlib.tar.gz')
+   >>> p.with_name('setup.py')
+   Path('/Downloads/setup.py')
+   >>> p = path('/')
+   >>> p.with_name('setup.py')  # Doctest: +ELLIPSIS
+   Traceback (most recent call last):
+     ...
+   ValueError: Path('/') has an empty name
+
+   >>> p = path('/Downloads/pathlib.tar.gz')
+   >>> p.with_suffix('.bz2')
+   Path('/Downloads/pathlib.tar.bz2')
+   >>> p = path('README')
+   >>> p.with_suffix('.txt')
+   Path('README.txt')
+
+Methods like pathlib.Path
+=========================
+
+stat()
+
+.. doctest::
+
+   >>> p = path('conf.py')
+   >>> p.stat().st_size
+   4170
+   >>> p.stat().st_mode
+   33188
+
+chmod(mode)
+
+.. doctest::
+
+   >>> p = path('conf.py')
+   >>> p.stat().st_mode
+   33188
+   >>> p.chmod(0o444)
+   >>> p.stat().st_mode
+   33060
+   >>> p.chmod(0o644)
+
+exists()
+
+   >>> path('.').exists()
+   True
+   >>> path('conf.py').exists()
+   True
+   >>> path('/etc').exists()
+   True
+   >>> path('nonexistentfile').exists()
+   False
+
+glob(pattern)
+
+   >>> sorted(path('.').glob('*.txt'))
+   [Path('contributing.txt'), Path('index.txt'), Path('install.txt')]
+   >>> sorted(path('.').glob('*/fs.txt'))
+   [Path('resources/fs.txt')]
+
+group()
+
+   >>> path('.').group()
+   'benoit'
+
+is_dir()
+
+   >>> path('resources').is_dir()
+   True
+   >>> path('index.txt').is_dir()
+   False
+
+is_file()
+
+   >>> path('index.txt').is_file()
+   True
+   >>> path('resources').is_file()
+   False
+
+is_symlink()
+
+   >>> path('index.txt').is_symlink()
+   False
+   >>> path('non-existent-file').is_symlink()
+   False
+   >>> path('/dev/stdin').is_symlink()
+   True
+
+is_socket()
+
+   >>> path('index.txt').is_socket()
+   False
+   >>> path('non-existent-file').is_socket()
+   False
+
+is_fifo()
+
+   >>> path('index.txt').is_fifo()
+   False
+   >>> path('non-existent-file').is_fifo()
+   False
+
+is_block_device()
+
+   >>> path('index.txt').is_block_device()
+   False
+   >>> path('non-existent-file').is_block_device()
+   False
+   >>> path('/dev/sda').is_block_device()
+   True
+
+is_char_device()
+
+   >>> path('index.txt').is_char_device()
+   False
+   >>> path('non-existent-file').is_char_device()
+   False
+   >>> path('/dev/tty').is_char_device()
+   True
+
+Differences with pathlib
+========================
+
+:mod:`pathlib` implements ``cwd()`` as a class-level method of ``Path``. In
+`xal`, it is a method of the instance of provider API, generally
+``session.fs.cwd()``.

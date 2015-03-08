@@ -8,10 +8,20 @@ import pathlib
 import shutil
 
 from xal.fs.provider import FileSystemProvider
+from xal.fs.resource import Path
 
 
 class LocalFileSystemProvider(FileSystemProvider):
     """Local filesystem manager."""
+    @property
+    def path(self):
+        try:
+            return self._path
+        except AttributeError:
+            self._path = PathProvider()
+            self._path.xal_session = self.xal_session
+            return self._path
+
     def cwd(self):
         """Return resource representing current working directory."""
         return self(str(pathlib.Path.cwd()))
@@ -34,14 +44,6 @@ class LocalFileSystemProvider(FileSystemProvider):
     def is_absolute(self, path):
         local_path = pathlib.Path(str(path))
         return local_path.is_absolute()
-
-    def is_dir(self, path):
-        local_path = pathlib.Path(str(path))
-        return local_path.is_dir()
-
-    def is_file(self, path):
-        local_path = pathlib.Path(str(path))
-        return local_path.is_file()
 
     def is_relative(self):
         return not self.is_absolute()
@@ -79,4 +81,57 @@ class LocalFileSystemProvider(FileSystemProvider):
 
     def supports(self, session):
         """Return True if session is local."""
+        return session.is_local
+
+    def stat(self, path):
+        local_path = pathlib.Path(str(path))
+        return local_path.stat()
+
+    def chmod(self, path, mode):
+        local_path = pathlib.Path(str(path))
+        local_path.chmod(mode)
+
+    def glob(self, path, pattern):
+        local_path = pathlib.Path(str(path))
+        matches = local_path.glob(pattern)
+        return [self(str(match)) for match in matches]
+
+    def group(self, path):
+        local_path = pathlib.Path(str(path))
+        return local_path.group()
+
+    def is_dir(self, path):
+        local_path = pathlib.Path(str(path))
+        return local_path.is_dir()
+
+    def is_file(self, path):
+        local_path = pathlib.Path(str(path))
+        return local_path.is_file()
+
+    def is_symlink(self, path):
+        local_path = pathlib.Path(str(path))
+        return local_path.is_symlink()
+
+    def is_socket(self, path):
+        local_path = pathlib.Path(str(path))
+        return local_path.is_socket()
+
+    def is_fifo(self, path):
+        local_path = pathlib.Path(str(path))
+        return local_path.is_fifo()
+
+    def is_block_device(self, path):
+        local_path = pathlib.Path(str(path))
+        return local_path.is_block_device()
+
+    def is_char_device(self, path):
+        local_path = pathlib.Path(str(path))
+        return local_path.is_char_device()
+
+
+class PathProvider(LocalFileSystemProvider):
+    def __init__(self, resource_factory=Path):
+        super(PathProvider, self).__init__(resource_factory=resource_factory)
+
+    def supports(self, session):
         return session.is_local
