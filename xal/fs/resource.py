@@ -76,13 +76,42 @@ class FileSystem(Resource):
 class Path(Resource):
     def __init__(self, *parts):
         super(Path, self).__init__()
+
+        #: Initial path value, as passed to constructor.
+        #: This attribute makes it possible to initialize a :class:`Path`
+        #: instance without a `xal` session. Without `xal` session, property
+        #: :attr:`pure_path` cannot be resolved, because the filesystem's
+        #: flavour is unknown.
         self._parts = parts
+
+        #: Path instance to restore as working directory on exit.
+        #: Methods such as ``cd`` return a :class:`Path` instance having this
+        #: attribute. So that, in a ``with`` context, the previous working
+        #: directory can be restored on exit.
+        self._exit_cwd = None
+
+        #: Whether this instance is a temporary resource, i.e. whether it
+        #: should be destroyed on ``__exit__``. Methods like :meth:`mkdir`
+        #: return a :class:`Path` instance having this attribute.
+        self._exit_rm = False
 
     def _cast(self, value):
         """Return value converted to :class:`Path`."""
         path = Path(value)
         path.xal_session = self.xal_session
         return path
+
+    def __enter__(self):
+        pass
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        # Restore working directory.
+        if self._exit_cwd:
+            self.xal_session.fs.cd(self._exit_cwd)
+        # Destroy temporary directory.
+        if self._exit_rm:
+            if self.is_absolute():
+                self.rmdir()
 
     def __div__(self, other):
         return self.__truediv__(other)
@@ -262,7 +291,9 @@ class Path(Resource):
     def lstat(self):
         return self.xal_session.fs.path.lstat(self)
 
-    # def mkdir(self, mode=0o777, parents=False):
+    def mkdir(self, mode=0o777, parents=False):
+        return self.xal_session.fs.path.mkdir(self, mode=mode, parents=parents)
+
     # def open(self, mode='r', buffering=-1, encoding=None, errors=None,
     # def      newline=None):
     # def owner(self):
@@ -270,7 +301,10 @@ class Path(Resource):
     # def replace(self, target):
     # def resolve(self):
     # def rglob(self, pattern):
-    # def rmdir(self):
+
+    def rmdir(self):
+        return self.xal_session.fs.path.rmdir(self)
+
     # def symlink_to(self, target, target_is_directory=False):
     # def touch(self, mode=0o777, exist_ok=True):
     # def unlink(self):

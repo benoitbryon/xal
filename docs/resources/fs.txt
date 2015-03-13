@@ -414,11 +414,39 @@ iterdir()
     Path('about/index.txt'),
     Path('about/license.txt'),
     Path('about/vision.txt')]
+
+lchmod()
+
+lstat()
+
+mkdir(mode=0o777, parents=False) and rmdir()
+
+.. doctest::
+
+   >>> import stat
+   >>> resource = path('dummy')
+   >>> assert not resource.exists()
+   >>> try:
+   ...     resource = resource.mkdir(mode=0o644)
+   ...     assert resource.exists()
+   ...     assert stat.S_IMODE(resource.stat().st_mode) == 0o644
+   ... finally:
+   ...     resource.rmdir()
+   >>> assert not resource.exists()
+
    
 
 Differences with pathlib
 ========================
 
+cwd()
+-----
+
 :mod:`pathlib` implements ``cwd()`` as a class-level method of ``Path``. In
 `xal`, it is a method of the instance of provider API, generally
 ``session.fs.cwd()``.
+
+mkdir() as a context manager
+----------------------------
+
+with mkdir() block destroys created tree on exit. # TODO
