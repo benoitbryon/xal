@@ -128,6 +128,11 @@ class LocalFileSystemProvider(FileSystemProvider):
         local_path = pathlib.Path(str(path))
         return local_path.is_char_device()
 
+    def iterdir(self, path):
+        local_path = pathlib.Path(str(path))
+        for sub_local_path in local_path.iterdir():
+            yield self(str(sub_local_path))
+
 
 class PathProvider(LocalFileSystemProvider):
     def __init__(self, resource_factory=Path):

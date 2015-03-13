@@ -116,9 +116,9 @@ Then run generic code within specific session:
 
 .. doctest::
 
-   >>> demo_resource(session)  # Doctest: +SKIP
-   >>> demo_cd(session)  # Doctest: +SKIP
-   >>> demo_mkdir(session)  # Doctest: +SKIP
+   >>> demo_resource(session)  # doctest: +SKIP
+   >>> demo_cd(session)  # doctest: +SKIP
+   >>> demo_mkdir(session)  # doctest: +SKIP
 
 SSH using Fabric
 ================
@@ -131,16 +131,16 @@ Setup some SSH session:
 
    >>> from xal.session.fabric import FabricSession
    >>> session = FabricSession()
-   >>> session.client.connect('localhost')  # Doctest: +SKIP
+   >>> session.client.connect('localhost')  # doctest: +SKIP
    True
 
 Then run generic code within specific session:
 
 .. doctest::
 
-   >>> demo_resource(session)  # Doctest: +SKIP
-   >>> demo_cd(session)  # Doctest: +SKIP
-   >>> demo_mkdir(session)  # Doctest: +SKIP
+   >>> demo_resource(session)  # doctest: +SKIP
+   >>> demo_cd(session)  # doctest: +SKIP
+   >>> demo_mkdir(session)  # doctest: +SKIP
 
 
 ****
@@ -164,7 +164,7 @@ Let's consider an example with relative path:
    >>> from xal.fs.resource import Path
    >>> path = Path('resources')
    >>> path.xal_session = session
-   >>> path  # Doctest: +ELLIPSIS
+   >>> path  # doctest: +ELLIPSIS
    Path('resources')
    >>> path.drive
    ''
@@ -191,7 +191,7 @@ Let's consider an example with absolute path:
 
    >>> path = Path('/home/me/resources')
    >>> path.xal_session = session
-   >>> path  # Doctest: +ELLIPSIS
+   >>> path  # doctest: +ELLIPSIS
    Path('/home/me/resources')
    >>> path.drive
    ''
@@ -258,7 +258,7 @@ Methods like pathlib.PurePath
    Path('etc/passwd')
    >>> p.relative_to('/etc')
    Path('passwd')
-   >>> p.relative_to('/usr')  # Doctest: +ELLIPSIS
+   >>> p.relative_to('/usr')  # doctest: +ELLIPSIS
    Traceback (most recent call last):
      ...
    ValueError: '/etc/passwd' does not start with '/usr'
@@ -267,7 +267,7 @@ Methods like pathlib.PurePath
    >>> p.with_name('setup.py')
    Path('/Downloads/setup.py')
    >>> p = path('/')
-   >>> p.with_name('setup.py')  # Doctest: +ELLIPSIS
+   >>> p.with_name('setup.py')  # doctest: +ELLIPSIS
    Traceback (most recent call last):
      ...
    ValueError: Path('/') has an empty name
@@ -306,6 +306,8 @@ chmod(mode)
 
 exists()
 
+.. doctest::
+
    >>> path('.').exists()
    True
    >>> path('conf.py').exists()
@@ -317,6 +319,8 @@ exists()
 
 glob(pattern)
 
+.. doctest::
+
    >>> sorted(path('.').glob('*.txt'))
    [Path('contributing.txt'), Path('index.txt'), Path('install.txt')]
    >>> sorted(path('.').glob('*/fs.txt'))
@@ -324,10 +328,14 @@ glob(pattern)
 
 group()
 
+.. doctest::
+
    >>> path('.').group()
    'benoit'
 
 is_dir()
+
+.. doctest::
 
    >>> path('resources').is_dir()
    True
@@ -336,12 +344,16 @@ is_dir()
 
 is_file()
 
+.. doctest::
+
    >>> path('index.txt').is_file()
    True
    >>> path('resources').is_file()
    False
 
 is_symlink()
+
+.. doctest::
 
    >>> path('index.txt').is_symlink()
    False
@@ -352,6 +364,8 @@ is_symlink()
 
 is_socket()
 
+.. doctest::
+
    >>> path('index.txt').is_socket()
    False
    >>> path('non-existent-file').is_socket()
@@ -359,12 +373,16 @@ is_socket()
 
 is_fifo()
 
+.. doctest::
+
    >>> path('index.txt').is_fifo()
    False
    >>> path('non-existent-file').is_fifo()
    False
 
 is_block_device()
+
+.. doctest::
 
    >>> path('index.txt').is_block_device()
    False
@@ -375,12 +393,28 @@ is_block_device()
 
 is_char_device()
 
+.. doctest::
+
    >>> path('index.txt').is_char_device()
    False
    >>> path('non-existent-file').is_char_device()
    False
    >>> path('/dev/tty').is_char_device()
    True
+
+iterdir()
+
+.. doctest::
+
+   >>> items = [child for child in path('about').iterdir()]
+   >>> sorted(items)  # doctest: +NORMALIZE_WHITESPACE
+   [Path('about/alternatives.txt'),
+    Path('about/authors.txt'),
+    Path('about/changelog.txt'),
+    Path('about/index.txt'),
+    Path('about/license.txt'),
+    Path('about/vision.txt')]
+   
 
 Differences with pathlib
 ========================

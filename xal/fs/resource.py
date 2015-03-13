@@ -253,6 +253,25 @@ class Path(Resource):
     def is_char_device(self):
         return self.xal_session.fs.path.is_char_device(self)
 
+    def iterdir(self):
+        return self.xal_session.fs.path.iterdir(self)
+
+    # def lchmod(self):
+    # def lstat(self):
+    # def mkdir(self, mode=0o777, parents=False):
+    # def open(self, mode='r', buffering=-1, encoding=None, errors=None,
+    # def      newline=None):
+    # def owner(self):
+    # def rename(self, target):
+    # def replace(self, target):
+    # def resolve(self):
+    # def rglob(self, pattern):
+    # def rmdir(self):
+    # def symlink_to(self, target, target_is_directory=False):
+    # def touch(self, mode=0o777, exist_ok=True):
+    # def unlink(self):
+
+
 """
 class Path(Resource):
     # Properties from pathlib.PurePath
