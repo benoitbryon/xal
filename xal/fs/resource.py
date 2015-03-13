@@ -256,8 +256,12 @@ class Path(Resource):
     def iterdir(self):
         return self.xal_session.fs.path.iterdir(self)
 
-    # def lchmod(self):
-    # def lstat(self):
+    def lchmod(self, mode):
+        return self.xal_session.fs.path.lchmod(self, mode)
+
+    def lstat(self):
+        return self.xal_session.fs.path.lstat(self)
+
     # def mkdir(self, mode=0o777, parents=False):
     # def open(self, mode='r', buffering=-1, encoding=None, errors=None,
     # def      newline=None):

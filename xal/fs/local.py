@@ -89,7 +89,7 @@ class LocalFileSystemProvider(FileSystemProvider):
 
     def chmod(self, path, mode):
         local_path = pathlib.Path(str(path))
-        local_path.chmod(mode)
+        return local_path.chmod(mode)
 
     def glob(self, path, pattern):
         local_path = pathlib.Path(str(path))
@@ -132,6 +132,14 @@ class LocalFileSystemProvider(FileSystemProvider):
         local_path = pathlib.Path(str(path))
         for sub_local_path in local_path.iterdir():
             yield self(str(sub_local_path))
+
+    def lchmod(self, path, mode):
+        local_path = pathlib.Path(str(path))
+        return local_path.lchmod(mode)
+
+    def lstat(self, path):
+        local_path = pathlib.Path(str(path))
+        return local_path.lstat()
 
 
 class PathProvider(LocalFileSystemProvider):
