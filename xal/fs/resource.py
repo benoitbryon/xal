@@ -294,9 +294,20 @@ class Path(Resource):
     def mkdir(self, mode=0o777, parents=False):
         return self.xal_session.fs.path.mkdir(self, mode=mode, parents=parents)
 
-    # def open(self, mode='r', buffering=-1, encoding=None, errors=None,
-    # def      newline=None):
-    # def owner(self):
+    def open(self, mode='r', buffering=-1, encoding=None, errors=None,
+             newline=None):
+        return self.xal_session.fs.path.open(
+            self,
+            mode=mode,
+            buffering=buffering,
+            encoding=encoding,
+            errors=errors,
+            newline=newline,
+        )
+
+    def owner(self):
+        return self.xal_session.fs.path.owner(self)
+
     # def rename(self, target):
     # def replace(self, target):
     # def resolve(self):

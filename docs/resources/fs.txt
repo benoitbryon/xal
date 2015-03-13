@@ -434,7 +434,25 @@ mkdir(mode=0o777, parents=False) and rmdir()
    ...     resource.rmdir()
    >>> assert not resource.exists()
 
-   
+open(mode='r', buffering=-1, encoding=None, errors=None, newline=None)
+
+.. doctest::
+
+   >>> print path('../VERSION').open().read()
+   0.2.dev0
+   <BLANKLINE>
+   >>> with path('../VERSION').open() as resource:
+   ...     print resource.read()
+   0.2.dev0
+   <BLANKLINE>
+
+owner()
+
+.. doctest::
+
+   >>> print path('.').owner()
+   benoit
+
 
 Differences with pathlib
 ========================

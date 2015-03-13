@@ -145,6 +145,21 @@ class LocalFileSystemProvider(FileSystemProvider):
         local_path = pathlib.Path(str(path))
         return local_path.rmdir()
 
+    def open(self, path, mode='r', buffering=-1, encoding=None, errors=None,
+             newline=None):
+        local_path = pathlib.Path(str(path))
+        return local_path.open(
+            mode=mode,
+            buffering=buffering,
+            encoding=encoding,
+            errors=errors,
+            newline=newline,
+        )
+
+    def owner(self, path):
+        local_path = pathlib.Path(str(path))
+        return local_path.owner()
+
 
 class PathProvider(LocalFileSystemProvider):
     def __init__(self, resource_factory=Path):
