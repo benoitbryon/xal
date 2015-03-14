@@ -163,7 +163,10 @@ class Path(Resource):
     def _set_pure_path(self, value):
         self._pure_path = value
 
-    pure_path = property(_get_pure_path, _set_pure_path)
+    def _del_pure_path(self):
+        del self._pure_path
+
+    pure_path = property(_get_pure_path, _set_pure_path, _del_pure_path)
 
     @property
     def drive(self):
@@ -308,17 +311,41 @@ class Path(Resource):
     def owner(self):
         return self.xal_session.fs.path.owner(self)
 
-    # def rename(self, target):
-    # def replace(self, target):
-    # def resolve(self):
-    # def rglob(self, pattern):
+    def rename(self, target):
+        result = self.xal_session.fs.path.rename(self, target)
+        del self.pure_path
+        self._parts = [target]
+        return result
+
+    def replace(self, target):
+        result = self.xal_session.fs.path.replace(self, target)
+        del self.pure_path
+        self._parts = [target]
+        return result
+
+    def resolve(self):
+        return self.xal_session.fs.path.resolve(self)
+
+    def rglob(self, pattern):
+        return self.xal_session.fs.path.rglob(self, pattern)
 
     def rmdir(self):
         return self.xal_session.fs.path.rmdir(self)
 
-    # def symlink_to(self, target, target_is_directory=False):
-    # def touch(self, mode=0o777, exist_ok=True):
-    # def unlink(self):
+    def symlink_to(self, target, target_is_directory=False):
+        return self.xal_session.fs.path.symlink_to(
+            self,
+            target=target,
+            target_is_directory=target_is_directory)
+
+    def touch(self, mode=0o777, exist_ok=True):
+        return self.xal_session.fs.path.touch(
+            self,
+            mode=mode,
+            exist_ok=exist_ok)
+
+    def unlink(self):
+        return self.xal_session.fs.path.unlink(self)
 
 
 """

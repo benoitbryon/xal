@@ -317,7 +317,7 @@ exists()
    >>> path('nonexistentfile').exists()
    False
 
-glob(pattern)
+glob(pattern) and rglob(pattern)
 
 .. doctest::
 
@@ -325,6 +325,23 @@ glob(pattern)
    [Path('contributing.txt'), Path('index.txt'), Path('install.txt')]
    >>> sorted(path('.').glob('*/fs.txt'))
    [Path('resources/fs.txt')]
+
+   >>> sorted(path().rglob('*.txt'))  # doctest: +NORMALIZE_WHITESPACE
+   [Path('about/alternatives.txt'),
+    Path('about/authors.txt'),
+    Path('about/changelog.txt'),
+    Path('about/index.txt'),
+    Path('about/license.txt'),
+    Path('about/vision.txt'),
+    Path('contributing.txt'),
+    Path('index.txt'),
+    Path('install.txt'),
+    Path('presentations/2013-europython/index.txt'),
+    Path('presentations/index.txt'),
+    Path('presentations/xal.txt'),
+    Path('resources/fs.txt'),
+    Path('resources/index.txt'),
+    Path('resources/sh.txt')]
 
 group()
 
@@ -351,16 +368,20 @@ is_file()
    >>> path('resources').is_file()
    False
 
-is_symlink()
+is_symlink() and symlink_to(target, target_is_directory=False)
 
 .. doctest::
 
    >>> path('index.txt').is_symlink()
    False
-   >>> path('non-existent-file').is_symlink()
+   >>> path('test-symlink').exists()
    False
-   >>> path('/dev/stdin').is_symlink()
+   >>> path('test-symlink').is_symlink()
+   False
+   >>> path('test-symlink').symlink_to(path('index.txt'))
+   >>> path('test-symlink').is_symlink()
    True
+   >>> path('test-symlink').unlink()
 
 is_socket()
 
@@ -453,6 +474,65 @@ owner()
    >>> print path('.').owner()
    benoit
 
+rename() and replace()
+
+.. doctest::
+
+   >>> p = path('foo')
+   >>> p.open('w').write(u'some text')
+   9L
+   >>> target = path('bar')
+   >>> p.exists()
+   True
+   >>> target.exists()
+   False
+   >>> p.rename(target)
+   >>> path('foo').exists()
+   False
+   >>> path('bar').exists()
+   True
+   >>> target.open().read()
+   u'some text'
+   >>> p.name
+   'bar'
+
+   >>> path('replaced').open('w').write(u'another text')
+   12L
+   >>> p.replace('replaced')
+   >>> path('replaced').open().read()
+   u'some text'
+   >>> path('bar').exists()
+   False
+
+   >>> path('replaced').unlink()  # Cleanup.
+
+resolve()
+
+.. doctest::
+
+   >>> print path().resolve()
+   /mnt/data/web/xal/docs
+
+touch(mode=0o777, exist_ok=True) and unlink()
+
+.. doctest::
+
+   >>> path('foo').exists()
+   False
+   >>> p = path('foo').touch(mode=0o644)
+   >>> p.exists()
+   True
+   >>> p.is_file()
+   True
+   >>> stat.S_IMODE(p.stat().st_mode) == 0o644
+   True
+   >>> p.touch()
+   Path('foo')
+
+   >>> p.unlink()
+   >>> p.exists()
+   False
+
 
 Differences with pathlib
 ========================
@@ -468,3 +548,10 @@ mkdir() as a context manager
 ----------------------------
 
 with mkdir() block destroys created tree on exit. # TODO
+
+resolve() works with non-existent files
+---------------------------------------
+
+pathlib.Path.resolve() raises OSError when called on a non-existent file or
+directory. In case of non existent file, `xal`'s resolve() returns absolute
+path to file.

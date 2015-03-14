@@ -70,6 +70,8 @@ class LocalFileSystemProvider(FileSystemProvider):
         local_path = pathlib.Path(str(path))
         if not local_path.is_absolute():
             local_path = pathlib.Path(str(self.cwd())) / local_path
+        if local_path.exists():
+            local_path = local_path.resolve()
         return self(str(local_path))
 
     def rm(self, path):
@@ -159,6 +161,39 @@ class LocalFileSystemProvider(FileSystemProvider):
     def owner(self, path):
         local_path = pathlib.Path(str(path))
         return local_path.owner()
+
+    def rename(self, path, target):
+        local_path = pathlib.Path(str(path))
+        local_target = pathlib.Path(str(target))
+        return local_path.rename(local_target)
+
+    def replace(self, path, target):
+        local_path = pathlib.Path(str(path))
+        local_target = pathlib.Path(str(target))
+        try:
+            return local_path.replace(local_target)
+        except NotImplementedError:  # Python<3.3 fallback
+            local_target.unlink()
+            return local_path.rename(target)
+
+    def rglob(self, path, pattern):
+        local_path = pathlib.Path(str(path))
+        matches = local_path.rglob(pattern)
+        return [self(str(match)) for match in matches]
+
+    def symlink_to(self, path, target, target_is_directory=False):
+        local_path = pathlib.Path(str(path))
+        local_target = pathlib.Path(str(target))
+        return local_path.symlink_to(local_target)
+
+    def touch(self, path, mode=0o777, exist_ok=True):
+        local_path = pathlib.Path(str(path))
+        local_path.touch(mode=mode, exist_ok=exist_ok)
+        return self(str(local_path))
+
+    def unlink(self, path):
+        local_path = pathlib.Path(str(path))
+        return local_path.unlink()
 
 
 class PathProvider(LocalFileSystemProvider):
