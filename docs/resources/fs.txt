@@ -288,7 +288,7 @@ stat()
 
    >>> p = path('conf.py')
    >>> p.stat().st_size
-   4170
+   4172
    >>> p.stat().st_mode
    33188
 
