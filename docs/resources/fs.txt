@@ -116,9 +116,9 @@ Then run generic code within specific session:
 
 .. doctest::
 
-   >>> demo_resource(session)  # doctest: +SKIP
-   >>> demo_cd(session)  # doctest: +SKIP
-   >>> demo_mkdir(session)  # doctest: +SKIP
+   >>> demo_resource(session)
+   >>> demo_cd(session)
+   >>> demo_mkdir(session)
 
 SSH using Fabric
 ================
@@ -131,16 +131,16 @@ Setup some SSH session:
 
    >>> from xal.session.fabric import FabricSession
    >>> session = FabricSession()
-   >>> session.client.connect('localhost')  # doctest: +SKIP
+   >>> session.client.connect('localhost')
    True
 
 Then run generic code within specific session:
 
 .. doctest::
 
-   >>> demo_resource(session)  # doctest: +SKIP
-   >>> demo_cd(session)  # doctest: +SKIP
-   >>> demo_mkdir(session)  # doctest: +SKIP
+   >>> demo_resource(session)
+   >>> demo_cd(session)
+   >>> demo_mkdir(session)
 
 
 ****
@@ -555,3 +555,9 @@ resolve() works with non-existent files
 pathlib.Path.resolve() raises OSError when called on a non-existent file or
 directory. In case of non existent file, `xal`'s resolve() returns absolute
 path to file.
+
+touch() returns Path instance
+-----------------------------
+
+pathlib.Path.touch() returns None, whereas xal's Path.touch() returns Path
+instance, so that calls can be chained.
