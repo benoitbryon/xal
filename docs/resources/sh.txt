@@ -38,6 +38,19 @@ By default, in ``LocalSession``, "sh" provider is
    >>> session.registry.default('sh')  # Doctest: +ELLIPSIS
    <xal.sh.local.LocalShProvider object at 0x...>
 
+.. tip::
+
+   The examples below also work with a `fabric` session like that:
+
+   .. code::
+
+      >>> from xal.session.fabric import FabricSession
+      >>> session = FabricSession()
+      >>> session.client.connect('localhost')
+      True
+
+   **The API is exactly the same!** Only session's configuration changes.
+
 For convenience, we will set ``sh`` as a shortcut for ``session.sh``:
 
 .. doctest::
@@ -115,7 +128,7 @@ You can create and handle pipes, they are commands too:
 
 .. doctest::
 
-   >>> echo = sh("echo -e 'hello\nworld'")
+   >>> echo = sh("echo -ne 'hello\nworld'")
    >>> grep = sh("grep 'world'")
    >>> piped = echo.pipe(grep)
    >>> piped().stdout

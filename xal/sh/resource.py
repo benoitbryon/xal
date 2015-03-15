@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Command resource."""
 from xal.resource import Resource
 
@@ -24,9 +23,12 @@ class ShCommand(Resource):
             self.xal_session = session
         return self.xal_session.sh.run(self)
 
+    def __str__(self):
+        return ' '.join([str(arg) for arg in self.arguments])
+
     @property
     def command(self):
-        return ' '.join(self.arguments)
+        return str(self)
 
     def pipe(self, other):
         pipe = ShPipe([self, other], stdin=self.stdin, stdout=other.stdout)
@@ -53,6 +55,5 @@ class ShResult(object):
 
 
 class ShPipe(ShCommand):
-    @property
-    def command(self):
-        return ' | '.join([item.command for item in self.arguments])
+    def __str__(self):
+        return ' | '.join([str(arg) for arg in self.arguments])

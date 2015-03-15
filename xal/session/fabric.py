@@ -17,8 +17,10 @@ class FabricSession(Session):
         # Let's import providers then register them to interfaces.
         from xal.client.fabric import FabricClient
         from xal.fs.fabric import FabricFileSystemProvider
+        from xal.sh.fabric import FabricShProvider
 
         self.registry.register(
             client=FabricClient(),
             fs=FabricFileSystemProvider(),
+            sh=FabricShProvider(),
         )
