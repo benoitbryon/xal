@@ -18,9 +18,11 @@ class FabricSession(Session):
         from xal.client.fabric import FabricClient
         from xal.fs.fabric import FabricFileSystemProvider
         from xal.sh.fabric import FabricShProvider
+        from xal.sys.fabric import FabricSysProvider
 
         self.registry.register(
             client=FabricClient(),
             fs=FabricFileSystemProvider(),
             sh=FabricShProvider(),
+            sys=FabricSysProvider(),
         )

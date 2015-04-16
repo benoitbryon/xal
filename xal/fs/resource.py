@@ -74,7 +74,10 @@ class FileSystem(Resource):
 
 
 class Path(Resource):
-    def __init__(self, *parts):
+    POSIX_FLAVOUR = 'posix'
+    WINDOWS_FLAVOUR = 'windows'
+
+    def __init__(self, path, flavour=POSIX_FLAVOUR):
         super(Path, self).__init__()
 
         #: Initial path value, as passed to constructor.
@@ -82,7 +85,10 @@ class Path(Resource):
         #: instance without a `xal` session. Without `xal` session, property
         #: :attr:`pure_path` cannot be resolved, because the filesystem's
         #: flavour is unknown.
-        self._parts = parts
+        if flavour == Path.POSIX_FLAVOUR:
+            self.pure_path = pathlib.PurePosixPath(str(path))
+        else:
+            raise NotImplementedError()
 
         #: Path instance to restore as working directory on exit.
         #: Methods such as ``cd`` return a :class:`Path` instance having this
@@ -96,7 +102,7 @@ class Path(Resource):
         self._exit_rm = False
 
     def _cast(self, value):
-        """Return value converted to :class:`Path`."""
+        """Return value converted to :class:`Path`, with XAL session."""
         path = Path(value)
         path.xal_session = self.xal_session
         return path
@@ -117,8 +123,8 @@ class Path(Resource):
         return self.__truediv__(other)
 
     def __truediv__(self, other):
-        other_path = self._cast(other)
-        other_path.pure_path = self.pure_path / other.pure_path
+        other_path = Path(self.pure_path / other.pure_path)
+        other_path.xal_session = self.xal_session
         return other_path
 
     def __bytes__(self):
@@ -128,45 +134,42 @@ class Path(Resource):
         return str(self.pure_path)
 
     def __unicode__(self):
-        return unicode(self.pure_path)
+        if self.xal_session:
+            return unicode(self.pure_path)
+        else:
+            return unicode(self._initial_path)
 
     def __repr__(self):
-        return "{cls}('{path}')".format(cls=self.__class__.__name__,
-                                        path=str(self.pure_path))
+        if self.xal_session:
+            return "{cls}('{path}')".format(cls=self.__class__.__name__,
+                                            path=str(self.pure_path))
+        else:
+            return "{cls}('{path}')".format(cls=self.__class__.__name__,
+                                            path=str(self._initial_path))
 
     def __copy__(self):
-        other = Path(str(self.pure_path))
+        other = Path(self.pure_path)
         other.xal_session = self.xal_session
         return other
 
     def __eq__(self, other):
-        other_path = self._cast(other)
-        return self.xal_session == other_path.xal_session \
-            and self.pure_path == other_path.pure_path
+        # Compare sessions.
+        if self.xal_session and other.xal_session:
+            if self.xal_session != other.xal_session:
+                return False
+        # Compare paths.
+        return self.pure_path == other.pure_path
 
     def __cmp__(self, other):
-        return cmp(self.pure_path, self._cast(other).pure_path)
-
-    def _get_pure_path(self):
-        try:
-            return self._pure_path
-        except AttributeError:
-            pass
-        if self.xal_session.sys.name == 'nt':
-            pure_path_cls = pathlib.PureWindowsPath
-        else:
-            pure_path_cls = pathlib.PurePosixPath
-        parts = [str(part) for part in self._parts]
-        self._pure_path = pure_path_cls(*parts)
-        return self._pure_path
-
-    def _set_pure_path(self, value):
-        self._pure_path = value
-
-    def _del_pure_path(self):
-        del self._pure_path
-
-    pure_path = property(_get_pure_path, _set_pure_path, _del_pure_path)
+        # Compare sessions.
+        if self.xal_session and other.xal_session:
+            if self.xal_session != other.xal_session:
+                if self.pure_path != other.pure_path:
+                    return cmp(self.pure_path, other.pure_path)
+                else:
+                    return cmp(self.xal_session, other.xal_session)
+        # Compare paths.
+        return cmp(self.pure_path, other.pure_path)
 
     @property
     def drive(self):
@@ -226,8 +229,8 @@ class Path(Resource):
 
     def joinpath(self, *other):
         other_path = self.__copy__()
-        other_pure_path = [self._cast(item).pure_path for item in other]
-        other_path.pure_path = self.pure_path.joinpath(*other_pure_path)
+        for third in other:
+            other_path = other_path / Path(third)
         return other_path
 
     def match(self, pattern):
@@ -312,15 +315,15 @@ class Path(Resource):
         return self.xal_session.fs.path.owner(self)
 
     def rename(self, target):
-        result = self.xal_session.fs.path.rename(self, target)
-        del self.pure_path
-        self._parts = [target]
+        other_path = self._cast(target)
+        result = self.xal_session.fs.path.rename(self, other_path)
+        self.pure_path = other_path.pure_path
         return result
 
     def replace(self, target):
-        result = self.xal_session.fs.path.replace(self, target)
-        del self.pure_path
-        self._parts = [target]
+        other_path = self._cast(target)
+        result = self.xal_session.fs.path.replace(self, other_path)
+        self.pure_path = other_path.pure_path
         return result
 
     def resolve(self):

@@ -2,7 +2,246 @@
 Paths, files and directories
 ############################
 
-`xal` provides an interface to browse directories and manage files.
+`xal` provides tools to manage files and directories.
+
+
+************
+Path objects
+************
+
+In builtin `xal` sessions (:class:`~xal.session.local.LocalSession` and
+:class:`~xal.session.fabric.FabricSession`), there is a ``fs`` interface. This
+interface exposes a ``path`` API to manage paths as resources:
+
+.. literalinclude:: /../tests/fs.py
+   :language: python
+   :pyobject: test_registry
+
+The ``fs.path`` interface can be used as a factory to create
+:class:`~xal.fs.resource.Path` resources:
+
+.. literalinclude:: /../tests/fs.py
+   :language: python
+   :pyobject: test_path_factory
+
+``Path`` instance can be converted to text:
+
+.. literalinclude:: /../tests/fs.py
+   :language: python
+   :pyobject: test_path_repr
+
+.. literalinclude:: /../tests/fs.py
+   :language: python
+   :pyobject: test_path_str
+
+.. tip::
+
+   `xal`'s path API is widely inspired by :mod:`pathlib`. As a `Python`
+   developer, if you feel familiar with :mod:`pathlib`, then you may jump to
+   `differences with pathlib`_ section.
+
+Properties
+==========
+
+``Path`` instances have properties just like :mod:`pathlib`'s pure paths:
+
+.. literalinclude:: /../tests/fs.py
+   :language: python
+   :pyobject: test_path_properties
+
+
+Methods
+=======
+
+``Path`` instances have methods like :class:`pathlib.PurePath`:
+
+.. literalinclude:: /../tests/fs.py
+   :language: python
+   :pyobject: test_purepath_methods
+
+
+Methods like pathlib.Path
+=========================
+
+stat()
+------
+
+.. literalinclude:: /../tests/fs.py
+   :language: python
+   :pyobject: test_stat
+
+chmod(mode)
+-----------
+
+.. literalinclude:: /../tests/fs.py
+   :language: python
+   :pyobject: test_chmod
+
+exists()
+--------
+
+.. literalinclude:: /../tests/fs.py
+   :language: python
+   :pyobject: test_exists
+
+glob(pattern) and rglob(pattern)
+--------------------------------
+
+.. literalinclude:: /../tests/fs.py
+   :language: python
+   :pyobject: test_glob
+
+.. literalinclude:: /../tests/fs.py
+   :language: python
+   :pyobject: test_rglob
+
+group()
+-------
+
+.. literalinclude:: /../tests/fs.py
+   :language: python
+   :pyobject: test_group
+
+is_dir()
+--------
+
+.. literalinclude:: /../tests/fs.py
+   :language: python
+   :pyobject: test_is_dir
+
+is_file()
+---------
+
+.. literalinclude:: /../tests/fs.py
+   :language: python
+   :pyobject: test_is_file
+
+is_symlink() and symlink_to(target, target_is_directory=False)
+--------------------------------------------------------------
+
+.. literalinclude:: /../tests/fs.py
+   :language: python
+   :pyobject: test_symlink
+
+is_socket()
+-----------
+
+.. literalinclude:: /../tests/fs.py
+   :language: python
+   :pyobject: test_is_socket
+
+is_fifo()
+---------
+
+.. literalinclude:: /../tests/fs.py
+   :language: python
+   :pyobject: test_is_fifo
+
+is_block_device()
+-----------------
+
+.. literalinclude:: /../tests/fs.py
+   :language: python
+   :pyobject: test_is_block_device
+
+is_char_device()
+----------------
+
+.. literalinclude:: /../tests/fs.py
+   :language: python
+   :pyobject: test_is_char_device
+
+iterdir()
+---------
+
+.. literalinclude:: /../tests/fs.py
+   :language: python
+   :pyobject: test_iterdir
+
+lchmod()
+--------
+
+lstat()
+-------
+
+mkdir(mode=0o777, parents=False) and rmdir()
+--------------------------------------------
+
+.. literalinclude:: /../tests/fs.py
+   :language: python
+   :pyobject: test_mkdir
+
+
+open(mode='r', buffering=-1, encoding=None, errors=None, newline=None)
+----------------------------------------------------------------------
+
+.. literalinclude:: /../tests/fs.py
+   :language: python
+   :pyobject: test_open
+
+owner()
+-------
+
+.. literalinclude:: /../tests/fs.py
+   :language: python
+   :pyobject: test_owner
+
+rename() and replace()
+----------------------
+
+.. literalinclude:: /../tests/fs.py
+   :language: python
+   :pyobject: test_rename
+
+resolve()
+---------
+
+.. literalinclude:: /../tests/fs.py
+   :language: python
+   :pyobject: test_resolve
+
+touch(mode=0o777, exist_ok=True) and unlink()
+---------------------------------------------
+
+.. literalinclude:: /../tests/fs.py
+   :language: python
+   :pyobject: test_touch
+
+
+Differences with pathlib
+========================
+
+Path constructor accepts a single argument
+------------------------------------------
+
+:class:`pathlib.Path` accepts multiple positional arguments. In `xal`, only
+one is accepted. This limitation eases implementation on pure paths (without a
+session).
+
+cwd()
+-----
+
+:mod:`pathlib` implements ``cwd()`` as a class-level method of ``Path``. In
+`xal`, it is a method of the instance of provider API, generally
+``session.fs.cwd()``.
+
+mkdir() as a context manager
+----------------------------
+
+with mkdir() block destroys created tree on exit. # TODO
+
+resolve() works with non-existent files
+---------------------------------------
+
+pathlib.Path.resolve() raises OSError when called on a non-existent file or
+directory. In case of non existent file, `xal`'s resolve() returns absolute
+path to file.
+
+touch() returns Path instance
+-----------------------------
+
+pathlib.Path.touch() returns None, whereas xal's Path.touch() returns Path
+instance, so that calls can be chained.
 
 
 ******
@@ -141,423 +380,3 @@ Then run generic code within specific session:
    >>> demo_resource(session)
    >>> demo_cd(session)
    >>> demo_mkdir(session)
-
-
-****
-Path
-****
-
-`xal` provides an API inspired by :mod:`pathlib`.
-
-Properties like pathlib.PurePath
-================================
-
-``Path`` instances have properties just like pathlib's pure paths.
-
-Let's consider an example with relative path:
-
-.. doctest::
-
-   >>> from xal.session.local import LocalSession
-   >>> session = LocalSession()
-
-   >>> from xal.fs.resource import Path
-   >>> path = Path('resources')
-   >>> path.xal_session = session
-   >>> path  # doctest: +ELLIPSIS
-   Path('resources')
-   >>> path.drive
-   ''
-   >>> path.root
-   ''
-   >>> path.anchor
-   ''
-   >>> path.parents
-   (Path('.'),)
-   >>> path.parent
-   Path('.')
-   >>> path.name
-   'resources'
-   >>> path.suffix
-   ''
-   >>> path.suffixes
-   []
-   >>> path.stem
-   'resources'
-
-Let's consider an example with absolute path:
-
-.. doctest::
-
-   >>> path = Path('/home/me/resources')
-   >>> path.xal_session = session
-   >>> path  # doctest: +ELLIPSIS
-   Path('/home/me/resources')
-   >>> path.drive
-   ''
-   >>> path.root
-   '/'
-   >>> path.anchor
-   '/'
-   >>> path.parents
-   (Path('/home/me'), Path('/home'), Path('/'))
-   >>> path.parent
-   Path('/home/me')
-   >>> path.name
-   'resources'
-   >>> path.suffix
-   ''
-   >>> path.suffixes
-   []
-   >>> path.stem
-   'resources'
-
-Methods like pathlib.PurePath
-=============================
-
-.. doctest::
-
-   >>> path = session.path
-   >>> path('resources') / path('fs.txt')
-   Path('resources/fs.txt')
-
-   >>> print unicode(path('resources'))
-   resources
-   >>> print unicode(path('/home/benoit/resources'))
-   /home/benoit/resources
-
-   >>> print str(path('resources'))
-   resources
-   >>> print str(path('/home/benoit/resources'))
-   /home/benoit/resources
-
-   >>> path('/home/benoit/resources').as_posix()
-   '/home/benoit/resources'
-
-   >>> path('/home/benoit/resources').as_uri()
-   'file:///home/benoit/resources'
-
-   >>> path('resources').is_absolute()
-   False
-
-   >>> path('nul').is_reserved()
-   False
-
-   >>> path('/home').joinpath('resources', path('fs.txt'))
-   Path('/home/resources/fs.txt')
-
-   >>> path('a/b.py').match('*.py')
-   True
-   >>> path('/a/b/c.py').match('b/*.py')
-   True
-   >>> path('/a/b/c.py').match('a/*.py')
-   False
-
-   >>> p = path('/etc/passwd')
-   >>> p.relative_to('/')
-   Path('etc/passwd')
-   >>> p.relative_to('/etc')
-   Path('passwd')
-   >>> p.relative_to('/usr')  # doctest: +ELLIPSIS
-   Traceback (most recent call last):
-     ...
-   ValueError: '/etc/passwd' does not start with '/usr'
-
-   >>> p = path('/Downloads/pathlib.tar.gz')
-   >>> p.with_name('setup.py')
-   Path('/Downloads/setup.py')
-   >>> p = path('/')
-   >>> p.with_name('setup.py')  # doctest: +ELLIPSIS
-   Traceback (most recent call last):
-     ...
-   ValueError: Path('/') has an empty name
-
-   >>> p = path('/Downloads/pathlib.tar.gz')
-   >>> p.with_suffix('.bz2')
-   Path('/Downloads/pathlib.tar.bz2')
-   >>> p = path('README')
-   >>> p.with_suffix('.txt')
-   Path('README.txt')
-
-Methods like pathlib.Path
-=========================
-
-stat()
-
-.. doctest::
-
-   >>> p = path('conf.py')
-   >>> p.stat().st_size
-   4172
-   >>> p.stat().st_mode
-   33188
-
-chmod(mode)
-
-.. doctest::
-
-   >>> p = path('conf.py')
-   >>> p.stat().st_mode
-   33188
-   >>> p.chmod(0o444)
-   >>> p.stat().st_mode
-   33060
-   >>> p.chmod(0o644)
-
-exists()
-
-.. doctest::
-
-   >>> path('.').exists()
-   True
-   >>> path('conf.py').exists()
-   True
-   >>> path('/etc').exists()
-   True
-   >>> path('nonexistentfile').exists()
-   False
-
-glob(pattern) and rglob(pattern)
-
-.. doctest::
-
-   >>> sorted(path('.').glob('*.txt'))
-   [Path('contributing.txt'), Path('index.txt'), Path('install.txt')]
-   >>> sorted(path('.').glob('*/fs.txt'))
-   [Path('resources/fs.txt')]
-
-   >>> sorted(path().rglob('*.txt'))  # doctest: +NORMALIZE_WHITESPACE
-   [Path('about/alternatives.txt'),
-    Path('about/authors.txt'),
-    Path('about/changelog.txt'),
-    Path('about/index.txt'),
-    Path('about/license.txt'),
-    Path('about/vision.txt'),
-    Path('contributing.txt'),
-    Path('index.txt'),
-    Path('install.txt'),
-    Path('presentations/2013-europython/index.txt'),
-    Path('presentations/index.txt'),
-    Path('presentations/xal.txt'),
-    Path('resources/fs.txt'),
-    Path('resources/index.txt'),
-    Path('resources/sh.txt')]
-
-group()
-
-.. doctest::
-
-   >>> path('.').group()
-   'benoit'
-
-is_dir()
-
-.. doctest::
-
-   >>> path('resources').is_dir()
-   True
-   >>> path('index.txt').is_dir()
-   False
-
-is_file()
-
-.. doctest::
-
-   >>> path('index.txt').is_file()
-   True
-   >>> path('resources').is_file()
-   False
-
-is_symlink() and symlink_to(target, target_is_directory=False)
-
-.. doctest::
-
-   >>> path('index.txt').is_symlink()
-   False
-   >>> path('test-symlink').exists()
-   False
-   >>> path('test-symlink').is_symlink()
-   False
-   >>> path('test-symlink').symlink_to(path('index.txt'))
-   >>> path('test-symlink').is_symlink()
-   True
-   >>> path('test-symlink').unlink()
-
-is_socket()
-
-.. doctest::
-
-   >>> path('index.txt').is_socket()
-   False
-   >>> path('non-existent-file').is_socket()
-   False
-
-is_fifo()
-
-.. doctest::
-
-   >>> path('index.txt').is_fifo()
-   False
-   >>> path('non-existent-file').is_fifo()
-   False
-
-is_block_device()
-
-.. doctest::
-
-   >>> path('index.txt').is_block_device()
-   False
-   >>> path('non-existent-file').is_block_device()
-   False
-   >>> path('/dev/sda').is_block_device()
-   True
-
-is_char_device()
-
-.. doctest::
-
-   >>> path('index.txt').is_char_device()
-   False
-   >>> path('non-existent-file').is_char_device()
-   False
-   >>> path('/dev/tty').is_char_device()
-   True
-
-iterdir()
-
-.. doctest::
-
-   >>> items = [child for child in path('about').iterdir()]
-   >>> sorted(items)  # doctest: +NORMALIZE_WHITESPACE
-   [Path('about/alternatives.txt'),
-    Path('about/authors.txt'),
-    Path('about/changelog.txt'),
-    Path('about/index.txt'),
-    Path('about/license.txt'),
-    Path('about/vision.txt')]
-
-lchmod()
-
-lstat()
-
-mkdir(mode=0o777, parents=False) and rmdir()
-
-.. doctest::
-
-   >>> import stat
-   >>> resource = path('dummy')
-   >>> assert not resource.exists()
-   >>> try:
-   ...     resource = resource.mkdir(mode=0o644)
-   ...     assert resource.exists()
-   ...     assert stat.S_IMODE(resource.stat().st_mode) == 0o644
-   ... finally:
-   ...     resource.rmdir()
-   >>> assert not resource.exists()
-
-open(mode='r', buffering=-1, encoding=None, errors=None, newline=None)
-
-.. doctest::
-
-   >>> print path('../VERSION').open().read()
-   0.2.dev0
-   <BLANKLINE>
-   >>> with path('../VERSION').open() as resource:
-   ...     print resource.read()
-   0.2.dev0
-   <BLANKLINE>
-
-owner()
-
-.. doctest::
-
-   >>> print path('.').owner()
-   benoit
-
-rename() and replace()
-
-.. doctest::
-
-   >>> p = path('foo')
-   >>> p.open('w').write(u'some text')
-   9L
-   >>> target = path('bar')
-   >>> p.exists()
-   True
-   >>> target.exists()
-   False
-   >>> p.rename(target)
-   >>> path('foo').exists()
-   False
-   >>> path('bar').exists()
-   True
-   >>> target.open().read()
-   u'some text'
-   >>> p.name
-   'bar'
-
-   >>> path('replaced').open('w').write(u'another text')
-   12L
-   >>> p.replace('replaced')
-   >>> path('replaced').open().read()
-   u'some text'
-   >>> path('bar').exists()
-   False
-
-   >>> path('replaced').unlink()  # Cleanup.
-
-resolve()
-
-.. doctest::
-
-   >>> print path().resolve()
-   /mnt/data/web/xal/docs
-
-touch(mode=0o777, exist_ok=True) and unlink()
-
-.. doctest::
-
-   >>> path('foo').exists()
-   False
-   >>> p = path('foo').touch(mode=0o644)
-   >>> p.exists()
-   True
-   >>> p.is_file()
-   True
-   >>> stat.S_IMODE(p.stat().st_mode) == 0o644
-   True
-   >>> p.touch()
-   Path('foo')
-
-   >>> p.unlink()
-   >>> p.exists()
-   False
-
-
-Differences with pathlib
-========================
-
-cwd()
------
-
-:mod:`pathlib` implements ``cwd()`` as a class-level method of ``Path``. In
-`xal`, it is a method of the instance of provider API, generally
-``session.fs.cwd()``.
-
-mkdir() as a context manager
-----------------------------
-
-with mkdir() block destroys created tree on exit. # TODO
-
-resolve() works with non-existent files
----------------------------------------
-
-pathlib.Path.resolve() raises OSError when called on a non-existent file or
-directory. In case of non existent file, `xal`'s resolve() returns absolute
-path to file.
-
-touch() returns Path instance
------------------------------
-
-pathlib.Path.touch() returns None, whereas xal's Path.touch() returns Path
-instance, so that calls can be chained.

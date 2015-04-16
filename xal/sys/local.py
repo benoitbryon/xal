@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-"""Base stuff for providers that handle system-related information."""
+"""Provider that handle local system-related information."""
 import platform
 import os
 import sys

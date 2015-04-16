@@ -23,6 +23,10 @@ class ShCommand(Resource):
             self.xal_session = session
         return self.xal_session.sh.run(self)
 
+    def __repr__(self):
+        return '{cls}({command})'.format(cls=self.__class__.__name__,
+                                         command=str(self))
+
     def __str__(self):
         return ' '.join([str(arg) for arg in self.arguments])
 

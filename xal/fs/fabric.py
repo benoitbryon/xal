@@ -7,10 +7,20 @@ import fabtools
 import pathlib
 
 from xal.fs.provider import FileSystemProvider
+from xal.fs.resource import Path
 
 
 class FabricFileSystemProvider(FileSystemProvider):
     """Local filesystem manager."""
+    @property
+    def path(self):
+        try:
+            return self._path
+        except AttributeError:
+            self._path = FabricPathProvider()
+            self._path.xal_session = self.xal_session
+            return self._path
+
     def cwd(self):
         """Return resource representing current working directory."""
         local_path = fabric.api.run('pwd', quiet=True)
@@ -74,4 +84,83 @@ class FabricFileSystemProvider(FileSystemProvider):
 
     def supports(self, session):
         """Return False if session is local."""
+        return not session.is_local
+
+    def stat(self, path):
+        raise NotImplementedError()
+
+    def chmod(self, path, mode):
+        raise NotImplementedError()
+
+    def glob(self, path, pattern):
+        raise NotImplementedError()
+
+    def group(self, path):
+        raise NotImplementedError()
+
+    def is_dir(self, path):
+        raise NotImplementedError()
+
+    def is_file(self, path):
+        raise NotImplementedError()
+
+    def is_symlink(self, path):
+        raise NotImplementedError()
+
+    def is_socket(self, path):
+        raise NotImplementedError()
+
+    def is_fifo(self, path):
+        raise NotImplementedError()
+
+    def is_block_device(self, path):
+        raise NotImplementedError()
+
+    def is_char_device(self, path):
+        raise NotImplementedError()
+
+    def iterdir(self, path):
+        raise NotImplementedError()
+
+    def lchmod(self, path, mode):
+        raise NotImplementedError()
+
+    def lstat(self, path):
+        raise NotImplementedError()
+
+    def rmdir(self, path):
+        raise NotImplementedError()
+
+    def open(self, path, mode='r', buffering=-1, encoding=None, errors=None,
+             newline=None):
+        raise NotImplementedError()
+
+    def owner(self, path):
+        raise NotImplementedError()
+
+    def rename(self, path, target):
+        raise NotImplementedError()
+
+    def replace(self, path, target):
+        raise NotImplementedError()
+
+    def rglob(self, path, pattern):
+        raise NotImplementedError()
+
+    def symlink_to(self, path, target, target_is_directory=False):
+        raise NotImplementedError()
+
+    def touch(self, path, mode=0o777, exist_ok=True):
+        raise NotImplementedError()
+
+    def unlink(self, path):
+        raise NotImplementedError()
+
+
+class FabricPathProvider(FabricFileSystemProvider):
+    def __init__(self, resource_factory=Path):
+        super(FabricPathProvider, self).__init__(
+            resource_factory=resource_factory)
+
+    def supports(self, session):
         return not session.is_local

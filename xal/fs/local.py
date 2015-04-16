@@ -18,7 +18,7 @@ class LocalFileSystemProvider(FileSystemProvider):
         try:
             return self._path
         except AttributeError:
-            self._path = PathProvider()
+            self._path = LocalPathProvider()
             self._path.xal_session = self.xal_session
             return self._path
 
@@ -196,9 +196,10 @@ class LocalFileSystemProvider(FileSystemProvider):
         return local_path.unlink()
 
 
-class PathProvider(LocalFileSystemProvider):
+class LocalPathProvider(LocalFileSystemProvider):
     def __init__(self, resource_factory=Path):
-        super(PathProvider, self).__init__(resource_factory=resource_factory)
+        super(LocalPathProvider, self).__init__(
+            resource_factory=resource_factory)
 
     def supports(self, session):
         return session.is_local

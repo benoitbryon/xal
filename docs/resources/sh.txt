@@ -2,9 +2,63 @@
 sh commands
 ###########
 
-XAL provides an interface to run shell commands through ``sh``.
+`xal` provides an interface to run shell commands through ``sh``.
 
-.. tip:: With a local session, XAL is a convenient subprocess wrapper.
+.. tip::
+
+   With a local session, XAL is a convenient wrapper for :mod:`subprocess`.
+
+
+***********
+Basic usage
+***********
+
+In builtin `xal` sessions (:class:`~xal.session.local.LocalSession` and
+:class:`~xal.session.fabric.FabricSession`), there is a ``sh`` interface:
+
+.. literalinclude:: /../tests/sh.py
+   :language: python
+   :pyobject: test_registry
+
+The ``sh`` interface can be used as a factory to create
+:class:`~xal.sh.resource.ShCommand` resources:
+
+.. literalinclude:: /../tests/sh.py
+   :language: python
+   :pyobject: test_resource_factory
+
+Command resources are not executed automatically once created. First you
+configure them (arguments, pipes, ...), then you actually run them. You have to
+run them explicitely. They are callables. When called, they return a
+:class:`~xal.sh.resource.ShResult` instance:
+
+.. literalinclude:: /../tests/sh.py
+   :language: python
+   :pyobject: test_basic_usage
+
+Command constructor accepts strings or iterables:
+
+.. literalinclude:: /../tests/sh.py
+   :language: python
+   :pyobject: test_command_constructor
+
+The ``sh`` interface has a ``run()`` shortcut that creates and runs ``Cmd``
+instances:
+
+.. literalinclude:: /../tests/sh.py
+   :language: python
+   :pyobject: test_run_shortcut
+
+
+*****
+Pipes
+*****
+
+You can create and handle pipes, they are commands too:
+
+.. literalinclude:: /../tests/sh.py
+   :language: python
+   :pyobject: test_pipes
 
 
 ***************************
@@ -17,124 +71,3 @@ Whereas Python's subprocess sets ``shell=False`` by default.
 
 This postulate influences design. XAL's sh interface helps you create and run
 commands through ``sh``: pipes, redirects...
-
-
-************************************
-"sh" provider in session's registry
-************************************
-
-Let's start with a local session:
-
-.. doctest::
-
-   >>> from xal.session.local import LocalSession
-   >>> session = LocalSession()
-
-By default, in ``LocalSession``, "sh" provider is
-``xal.sh.local.LocalShProvider``:
-
-.. doctest::
-
-   >>> session.registry.default('sh')  # Doctest: +ELLIPSIS
-   <xal.sh.local.LocalShProvider object at 0x...>
-
-.. tip::
-
-   The examples below also work with a `fabric` session like that:
-
-   .. code::
-
-      >>> from xal.session.fabric import FabricSession
-      >>> session = FabricSession()
-      >>> session.client.connect('localhost')
-      True
-
-   **The API is exactly the same!** Only session's configuration changes.
-
-For convenience, we will set ``sh`` as a shortcut for ``session.sh``:
-
-.. doctest::
-
-   >>> sh = session.sh
-
-
-**********************
-The ShCommand resource
-**********************
-
-The ``sh`` interface can be used as a factory to create
-:py:class:`xal.sh.resource.ShCommand` resources:
-
-.. doctest::
-
-   >>> sh("echo -n 'Hello world!'")  # Doctest: +ELLIPSIS
-   <xal.sh.resource.ShCommand object at 0x...>
-
-Command resources are not executed automatically once created.
-You have to run them explicitely. They are callables.
-When called, they return a :py:class:`xal.sh.resource.ShResult` instance:
-
-.. doctest::
-
-   >>> command = sh("echo -n 'Hello world!'")
-   >>> result = command()
-   >>> result  # Doctest: +ELLIPSIS
-   <xal.sh.resource.ShResult object at 0x...>
-   >>> result.stdout
-   'Hello world!'
-   >>> result.return_code
-   0
-   >>> result.succeeded
-   True
-
-Command constructor accepts strings or iterables:
-
-.. doctest::
-
-   >>> sh("echo -n 'Hello world!'")().stdout
-   'Hello world!'
-   >>> sh(["echo", "-n", "Hello world!"])().stdout
-   'Hello world!'
-
-The ``sh`` interface has a ``run()`` shortcut that creates and runs ``Cmd``
-instances:
-
-.. doctest::
-
-   >>> sh.run("echo -n 'Hello world!'").stdout
-   'Hello world!'
-   >>> sh.run(["echo", "-n", "Hello world!"]).stdout
-   'Hello world!'
-   >>> command = sh("echo -n 'Hello world!'")
-   >>> sh.run(command).stdout
-   'Hello world!'
-
-You can create a resource for later use in one or several sessions:
-
-.. doctest::
-
-   >>> hello = sh("echo -n 'Hello world!'")
-   >>> from xal.session.local import LocalSession
-   >>> session = LocalSession()
-   >>> session.sh.run(hello).stdout
-   'Hello world!'
-
-
-*****
-Pipes
-*****
-
-You can create and handle pipes, they are commands too:
-
-.. doctest::
-
-   >>> echo = sh("echo -ne 'hello\nworld'")
-   >>> grep = sh("grep 'world'")
-   >>> piped = echo.pipe(grep)
-   >>> piped().stdout
-   'world\n'
-   >>> piped = echo | grep
-   >>> piped().stdout
-   'world\n'
-   >>> sh.run(echo | grep).stdout
-   'world\n'
