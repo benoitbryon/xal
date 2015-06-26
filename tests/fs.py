@@ -1,4 +1,11 @@
 """Tests around filesystem API: paths, directories and files."""
+import os
+
+
+#: Absolute path to current working directory.
+#: This is useful to setup working directory in tests in order to
+#: use fixtures.
+here = os.path.abspath(os.getcwd())
 
 
 def test_registry(session):
@@ -26,16 +33,23 @@ def test_comparison(session):
     """Path objects can be compared using ``==``."""
     from xal.fs.resource import Path
 
-    # Virtual paths (not attached to session) are compared on path only.
+    # Obviously, instances are compared with respect to initial parameters.
     assert Path('one') == Path('one')
     assert Path('one') != Path('two')
+
+    # Virtual paths (not attached to session) are compared on path only.
+    # If one item in the comparison has no session, both are compared as
+    # virtual paths.
     assert Path('one') == session.fs.path('one')
-    assert session.fs.path('one') == Path('one')
     assert Path('one') != session.fs.path('two')
 
     # Concrete paths (attached to session) are compared on path and session.
+    # This happens when both instances have a session.
     assert session.fs.path('one') == session.fs.path('one')
     assert session.fs.path('one') != session.fs.path('two')
+
+    # Order of items in comparison doesn't affect the result.
+    assert session.fs.path('one') == Path('one')
 
 
 def test_path_repr(session):
@@ -145,6 +159,7 @@ def test_purepath_methods(session):
 
 def test_stat(session):
     """``Path`` instances implement stat()."""
+    session.fs.cd(here)
     path = session.fs.path('tests/fixtures/hello.txt')
     assert path.stat().st_size == 13
     assert path.stat().st_mode == 33188
@@ -304,7 +319,7 @@ def test_rename(session):
 
 def test_resolve(session):
     """``Path`` instances implement resolve()."""
-    assert session.fs.path('.').resolve() == session.fs.path('/mnt/data/web/xal')
+    assert session.fs.path('.').resolve() == session.fs.path(here)
 
 
 def test_rglob(session):

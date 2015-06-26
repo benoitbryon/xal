@@ -1,10 +1,11 @@
 """Implementation of SSH filesystem using Fabric."""
 from __future__ import absolute_import
+import pathlib
 
 import fabric.api
 import fabric.contrib.files
 import fabtools
-import pathlib
+import posix
 
 from xal.fs.provider import FileSystemProvider
 from xal.fs.resource import Path
@@ -54,7 +55,7 @@ class FabricFileSystemProvider(FileSystemProvider):
 
     def mkdir(self, path, mode=0o777, parents=False):
         local_path = self.resolve(path)
-        fabric.api.run('mkdir -p {path}'.format(path=local_path), quiet=True)
+        self.xal_session.sh.run('mkdir -p {path}'.format(path=local_path))
         return self(str(local_path))
 
     def name(self, path):
@@ -78,16 +79,23 @@ class FabricFileSystemProvider(FileSystemProvider):
 
     def rm(self, path):
         local_path = self.resolve(path)
-        fabric.api.run(
-            'rm -r "{path}"'.format(path=str(local_path)),
-            quiet=True)
+        self.xal_session.sh.run(
+            'rm -r "{path}"'.format(path=str(local_path)))
 
     def supports(self, session):
         """Return False if session is local."""
         return not session.is_local
 
     def stat(self, path):
-        raise NotImplementedError()
+        """Return stat result."""
+        local_path = self.resolve(path)
+        cmd = 'stat --printf="%f %i %d %h %u %g %s %X %Y %W" {path}' \
+              .format(path=local_path)
+        result = self.xal_session.sh.run(cmd)
+        result = result.stdout.split(" ")
+        result[0] = int(result[0], base=16)
+        result = map(int, result)
+        return posix.stat_result(result)
 
     def chmod(self, path, mode):
         raise NotImplementedError()
