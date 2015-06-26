@@ -98,12 +98,6 @@ class FabricFileSystemProvider(FileSystemProvider):
     def group(self, path):
         raise NotImplementedError()
 
-    def is_dir(self, path):
-        raise NotImplementedError()
-
-    def is_file(self, path):
-        raise NotImplementedError()
-
     def is_symlink(self, path):
         raise NotImplementedError()
 
