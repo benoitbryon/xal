@@ -98,7 +98,12 @@ class FabricFileSystemProvider(FileSystemProvider):
         return posix.stat_result(result)
 
     def chmod(self, path, mode):
-        raise NotImplementedError()
+        local_path = self.resolve(path)
+        local_mode = '{mode:o}'.format(mode=mode)
+        cmd = 'chmod {mode} {path}' \
+              .format(path=local_path, mode=local_mode)
+        self.xal_session.sh.run(cmd)
+        return None
 
     def glob(self, path, pattern):
         raise NotImplementedError()

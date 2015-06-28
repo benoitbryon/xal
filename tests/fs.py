@@ -167,6 +167,7 @@ def test_stat(session):
 
 def test_chmod(session):
     """``Path`` instances implement chmod()."""
+    session.fs.cd(here)
     path = session.fs.path('tests/fixtures/hello.txt')
     assert path.stat().st_mode == 33188
     path.chmod(0o444)
