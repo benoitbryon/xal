@@ -134,18 +134,11 @@ class Path(Resource):
         return str(self.pure_path)
 
     def __unicode__(self):
-        if self.xal_session:
-            return unicode(self.pure_path)
-        else:
-            return unicode(self._initial_path)
+        return unicode(self.pure_path)
 
     def __repr__(self):
-        if self.xal_session:
-            return "{cls}('{path}')".format(cls=self.__class__.__name__,
-                                            path=str(self.pure_path))
-        else:
-            return "{cls}('{path}')".format(cls=self.__class__.__name__,
-                                            path=str(self._initial_path))
+        return "{cls}('{path}')".format(cls=self.__class__.__name__,
+                                        path=str(self.pure_path))
 
     def __copy__(self):
         other = Path(self.pure_path)

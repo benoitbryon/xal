@@ -106,7 +106,13 @@ class FabricFileSystemProvider(FileSystemProvider):
         return None
 
     def glob(self, path, pattern):
-        raise NotImplementedError()
+        local_path = self.resolve(path)
+        cmd = 'shopt -s globstar; cd {path} && ls {pattern}' \
+              .format(path=local_path, pattern=pattern)
+        result = self.xal_session.sh.run(cmd)
+        result = result.stdout.strip().split('\n')
+        result = [self(p) for p in result]  # Convert to Path objects.
+        return result
 
     def group(self, path):
         raise NotImplementedError()

@@ -187,6 +187,7 @@ def test_glob(session):
     """``Path`` instances implement glob()."""
     from xal.fs.resource import Path
 
+    session.fs.cd(here)
     assert sorted(session.fs.path('.').glob('*.rst')) == [
         Path('CONTRIBUTING.rst'),
         Path('README.rst'),
