@@ -3,6 +3,7 @@ from __future__ import absolute_import
 import pathlib
 
 import fabric.api
+import fabric.context_managers
 import fabric.contrib.files
 import fabtools
 import posix
@@ -46,11 +47,13 @@ class FabricFileSystemProvider(FileSystemProvider):
 
     def is_dir(self, path):
         local_path = self.resolve(path)
-        return fabtools.files.is_dir(local_path)
+        with fabric.context_managers.hide('running', 'stdout', 'stderr'):
+            return fabtools.files.is_dir(local_path)
 
     def is_file(self, path):
         local_path = self.resolve(path)
-        return fabtools.files.is_file(local_path)
+        with fabric.context_managers.hide('running', 'stdout', 'stderr'):
+            return fabtools.files.is_file(local_path)
 
     def is_relative(self):
         return not self.is_absolute()
@@ -118,11 +121,13 @@ class FabricFileSystemProvider(FileSystemProvider):
 
     def group(self, path):
         local_path = self.resolve(path)
-        return fabtools.files.group(local_path)
+        with fabric.context_managers.hide('running', 'stdout', 'stderr'):
+            return fabtools.files.group(local_path)
 
     def is_symlink(self, path):
         local_path = self.resolve(path)
-        return fabtools.files.is_link(local_path)
+        with fabric.context_managers.hide('running', 'stdout', 'stderr'):
+            return fabtools.files.is_link(local_path)
 
     def is_socket(self, path):
         raise NotImplementedError()
@@ -165,13 +170,20 @@ class FabricFileSystemProvider(FileSystemProvider):
         raise NotImplementedError()
 
     def symlink_to(self, path, target, target_is_directory=False):
-        raise NotImplementedError()
+        local_path = self.resolve(path)
+        local_target = self.resolve(target)
+        with fabric.context_managers.hide('running', 'stdout', 'stderr'):
+            fabtools.files.symlink(unicode(local_target), unicode(local_path))
+        return None
 
     def touch(self, path, mode=0o777, exist_ok=True):
         raise NotImplementedError()
 
     def unlink(self, path):
-        raise NotImplementedError()
+        local_path = self.resolve(path)
+        with fabric.context_managers.hide('running', 'stdout', 'stderr'):
+            fabtools.files.remove(unicode(local_path))
+        return None
 
 
 class FabricPathProvider(FabricFileSystemProvider):

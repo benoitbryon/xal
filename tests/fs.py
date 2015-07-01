@@ -209,14 +209,17 @@ def test_if_file(session):
 
 def test_symlink(session):
     """``Path`` instances implement symlink_to() and is_symlink()."""
-    from xal.fs.resource import Path
+    source_path = session.fs.path('tests/fixtures/hello.txt')
+    link_path = session.fs.path('test_symlink')
 
-    assert session.fs.path('index.txt').is_symlink() is False
-    assert session.fs.path('test-symlink').exists() is False
-    assert session.fs.path('test-symlink').is_symlink() is False
-    session.fs.path('test-symlink').symlink_to(Path('index.txt'))
-    assert session.fs.path('test-symlink').is_symlink() is True
-    session.fs.path('test-symlink').unlink()
+    assert source_path.is_symlink() is False
+    assert link_path.exists() is False
+    assert link_path.is_symlink() is False
+    try:
+        link_path.symlink_to(source_path)
+        assert link_path.is_symlink() is True
+    finally:
+        link_path.unlink()
 
 
 def test_is_socket(session):
