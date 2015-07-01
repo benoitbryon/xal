@@ -45,10 +45,12 @@ class FabricFileSystemProvider(FileSystemProvider):
         return local_path.is_absolute()
 
     def is_dir(self, path):
-        return fabtools.files.is_dir(path.path)
+        local_path = self.resolve(path)
+        return fabtools.files.is_dir(local_path)
 
     def is_file(self, path):
-        return fabtools.files.is_file(path.path)
+        local_path = self.resolve(path)
+        return fabtools.files.is_file(local_path)
 
     def is_relative(self):
         return not self.is_absolute()
@@ -115,10 +117,12 @@ class FabricFileSystemProvider(FileSystemProvider):
         return result
 
     def group(self, path):
-        raise NotImplementedError()
+        local_path = self.resolve(path)
+        return fabtools.files.group(local_path)
 
     def is_symlink(self, path):
-        raise NotImplementedError()
+        local_path = self.resolve(path)
+        return fabtools.files.is_link(local_path)
 
     def is_socket(self, path):
         raise NotImplementedError()

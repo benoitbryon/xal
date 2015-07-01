@@ -2,12 +2,6 @@
 import os
 
 
-#: Absolute path to current working directory.
-#: This is useful to setup working directory in tests in order to
-#: use fixtures.
-here = os.path.abspath(os.getcwd())
-
-
 def test_registry(session):
     """Session has ``fs.path`` provider."""
     from xal.fs.provider import FileSystemProvider
@@ -159,7 +153,6 @@ def test_purepath_methods(session):
 
 def test_stat(session):
     """``Path`` instances implement stat()."""
-    session.fs.cd(here)
     path = session.fs.path('tests/fixtures/hello.txt')
     assert path.stat().st_size == 13
     assert path.stat().st_mode == 33188
@@ -167,7 +160,6 @@ def test_stat(session):
 
 def test_chmod(session):
     """``Path`` instances implement chmod()."""
-    session.fs.cd(here)
     path = session.fs.path('tests/fixtures/hello.txt')
     assert path.stat().st_mode == 33188
     path.chmod(0o444)
@@ -187,7 +179,6 @@ def test_glob(session):
     """``Path`` instances implement glob()."""
     from xal.fs.resource import Path
 
-    session.fs.cd(here)
     assert sorted(session.fs.path('.').glob('*.rst')) == [
         Path('CONTRIBUTING.rst'),
         Path('README.rst'),
@@ -321,7 +312,10 @@ def test_rename(session):
 
 def test_resolve(session):
     """``Path`` instances implement resolve()."""
-    assert session.fs.path('.').resolve() == session.fs.path(here)
+    resolved_path = session.fs.path('.').resolve()
+    here = os.path.abspath(os.getcwd())
+    assert resolved_path == session.fs.path(here)
+    assert resolved_path.is_absolute()
 
 
 def test_rglob(session):
