@@ -142,7 +142,12 @@ class FabricFileSystemProvider(FileSystemProvider):
         raise NotImplementedError()
 
     def iterdir(self, path):
-        raise NotImplementedError()
+        local_path = self.resolve(path)
+        cmd = 'ls -1v {path}'.format(path=local_path)
+        result = self.xal_session.sh.run(cmd)
+        result = result.stdout.strip().split('\n')
+        for sub_path in result:
+            yield path / self(sub_path)
 
     def lchmod(self, path, mode):
         raise NotImplementedError()
