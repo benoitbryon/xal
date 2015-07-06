@@ -60,7 +60,13 @@ class FabricFileSystemProvider(FileSystemProvider):
 
     def mkdir(self, path, mode=0o777, parents=False):
         local_path = self.resolve(path)
-        self.xal_session.sh.run('mkdir -p {path}'.format(path=local_path))
+        local_mode = '{mode:o}'.format(mode=mode)
+        command = ['mkdir']
+        if parents:
+            command.append('--parents')
+        command.append('--mode={mode}'.format(mode=local_mode))
+        command.append(local_path)
+        self.xal_session.sh.run(command)
         return self(str(local_path))
 
     def name(self, path):
@@ -156,7 +162,10 @@ class FabricFileSystemProvider(FileSystemProvider):
         raise NotImplementedError()
 
     def rmdir(self, path):
-        raise NotImplementedError()
+        local_path = self.resolve(path)
+        cmd = 'rmdir {path}'.format(path=local_path)
+        self.xal_session.sh.run(cmd)
+        return None
 
     def open(self, path, mode='r', buffering=-1, encoding=None, errors=None,
              newline=None):

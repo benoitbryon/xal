@@ -51,7 +51,7 @@ class LocalFileSystemProvider(FileSystemProvider):
     def mkdir(self, path, mode=0o777, parents=False):
         local_path = self.resolve(str(path))
         local_path = pathlib.Path(str(local_path))
-        local_path.mkdir(mode, parents)
+        local_path.mkdir(mode=mode, parents=parents)
         return self(str(local_path))
 
     def name(self, path):

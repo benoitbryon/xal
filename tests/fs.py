@@ -270,9 +270,10 @@ def test_mkdir(session):
     resource = session.fs.path('dummy')
     assert not resource.exists()
     try:
-        resource = resource.mkdir(mode=0o644)
+        resource = resource.mkdir(mode=0o755)
         assert resource.exists()
-        assert stat.S_IMODE(resource.stat().st_mode) == 0o644
+        st = resource.stat()
+        assert stat.S_IMODE(st.st_mode) == 0o755
     finally:
         resource.rmdir()
     assert not resource.exists()
