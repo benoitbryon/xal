@@ -222,30 +222,30 @@ def test_symlink(session):
         link_path.unlink()
 
 
-#def test_is_socket(session):
-#    """``Path`` instances implement is_socket()."""
-#    assert session.fs.path('tests/fixtures/hello.txt').is_socket() is False
-#    assert session.fs.path('non-existent-file').is_socket() is False
-#
-#
-#def test_is_fifo(session):
-#    """``Path`` instances implement if_fifo()."""
-#    assert session.fs.path('index.txt').is_fifo() is False
-#    assert session.fs.path('non-existent-file').is_fifo() is False
-#
-#
-#def test_is_block_device(session):
-#    """``Path`` instances implement is_block_device()."""
-#    assert session.fs.path('index.txt').is_block_device() is False
-#    assert session.fs.path('non-existent-file').is_block_device() is False
-#    assert session.fs.path('/dev/sda').is_block_device() is True
-#
-#
-#def test_is_char_device(session):
-#    """``Path`` instances implement is_char_device()."""
-#    assert session.fs.path('index.txt').is_char_device() is False
-#    assert session.fs.path('non-existent-file').is_char_device() is False
-#    assert session.fs.path('/dev/tty').is_char_device() is True
+def test_is_socket(session):
+    """``Path`` instances implement is_socket()."""
+    assert session.fs.path('tests/fixtures/hello.txt').is_socket() is False
+    assert session.fs.path('non-existent-file').is_socket() is False
+
+
+def test_is_fifo(session):
+    """``Path`` instances implement if_fifo()."""
+    assert session.fs.path('index.txt').is_fifo() is False
+    assert session.fs.path('non-existent-file').is_fifo() is False
+
+
+def test_is_block_device(session):
+    """``Path`` instances implement is_block_device()."""
+    assert session.fs.path('index.txt').is_block_device() is False
+    assert session.fs.path('non-existent-file').is_block_device() is False
+    assert session.fs.path('/dev/sda').is_block_device() is True
+
+
+def test_is_char_device(session):
+    """``Path`` instances implement is_char_device()."""
+    assert session.fs.path('index.txt').is_char_device() is False
+    assert session.fs.path('non-existent-file').is_char_device() is False
+    assert session.fs.path('/dev/tty').is_char_device() is True
 
 
 def test_iterdir(session):

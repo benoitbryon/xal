@@ -1,12 +1,13 @@
 """Implementation of SSH filesystem using Fabric."""
 from __future__ import absolute_import
 import pathlib
+import posix
+import stat
 
 import fabric.api
 import fabric.context_managers
 import fabric.contrib.files
 import fabtools
-import posix
 
 from xal.fs.provider import FileSystemProvider
 from xal.fs.resource import Path
@@ -103,6 +104,10 @@ class FabricFileSystemProvider(FileSystemProvider):
         cmd = 'stat --printf="%f %i %d %h %u %g %s %X %Y %W" {path}' \
               .format(path=local_path)
         result = self.xal_session.sh.run(cmd)
+        if not result.succeeded:
+            if not self.exists(path):
+                raise OSError(path)
+            raise Exception()
         result = result.stdout.split(" ")
         result[0] = int(result[0], base=16)
         result = map(int, result)
@@ -136,16 +141,32 @@ class FabricFileSystemProvider(FileSystemProvider):
             return fabtools.files.is_link(local_path)
 
     def is_socket(self, path):
-        raise NotImplementedError()
+        try:
+            mode = self.stat(path).st_mode
+        except OSError:
+            return False
+        return stat.S_ISSOCK(mode)
 
     def is_fifo(self, path):
-        raise NotImplementedError()
+        try:
+            mode = self.stat(path).st_mode
+        except OSError:
+            return False
+        return stat.S_ISFIFO(mode)
 
     def is_block_device(self, path):
-        raise NotImplementedError()
+        try:
+            mode = self.stat(path).st_mode
+        except OSError:
+            return False
+        return stat.S_ISBLK(mode)
 
     def is_char_device(self, path):
-        raise NotImplementedError()
+        try:
+            mode = self.stat(path).st_mode
+        except OSError:
+            return False
+        return stat.S_ISCHR(mode)
 
     def iterdir(self, path):
         local_path = self.resolve(path)
