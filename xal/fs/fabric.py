@@ -190,7 +190,8 @@ class FabricFileSystemProvider(FileSystemProvider):
 
     def open(self, path, mode='r', buffering=-1, encoding=None, errors=None,
              newline=None):
-        raise NotImplementedError()
+        local_path = self.resolve(path)
+        return self.xal_session.client.ssh_client.open(unicode(local_path))
 
     def owner(self, path):
         raise NotImplementedError()

@@ -2,6 +2,7 @@
 from __future__ import absolute_import
 
 import fabric.api
+import fabric.sftp
 
 from xal.client.provider import Client
 
@@ -11,6 +12,7 @@ class FabricClient(Client):
         fabric.api.env.use_ssh_config = True
         fabric.api.env.hosts = [host]
         fabric.api.env.host_string = host
+        self.ssh_client = fabric.sftp.SFTP(host)
         return True
 
     def disconnect(self):
