@@ -194,7 +194,12 @@ class FabricFileSystemProvider(FileSystemProvider):
         return self.xal_session.client.ssh_client.open(unicode(local_path))
 
     def owner(self, path):
-        raise NotImplementedError()
+        local_path = self.resolve(path)
+        cmd = "ls -ld {path} | awk '{{print $3}}'".format(path=local_path)
+        result = self.xal_session.sh.run(cmd)
+        if result.succeeded:
+            return result.stdout.strip()
+        raise KeyError()
 
     def rename(self, path, target):
         raise NotImplementedError()

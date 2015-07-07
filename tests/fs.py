@@ -289,7 +289,9 @@ def test_open(session):
 
 def test_owner(session):
     """``Path`` instances implement owner()."""
-    assert session.fs.path('.').owner() == 'benoit'
+    current_user = session.sh.run('id -u --name').stdout.strip()
+    assert session.fs.path('.').owner() == current_user
+    assert session.fs.path('README.rst').owner() == current_user
 
 
 def test_rename(session):
