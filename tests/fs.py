@@ -200,7 +200,7 @@ def test_is_dir(session):
     assert session.fs.path('i-do-not-exist').is_dir() is False
 
 
-def test_if_file(session):
+def test_is_file(session):
     """``Path`` instances implement is_file()."""
     assert session.fs.path('setup.py').is_file() is True
     assert session.fs.path('tests').is_file() is False
