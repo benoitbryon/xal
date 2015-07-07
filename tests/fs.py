@@ -298,22 +298,23 @@ def test_rename(session):
     """``Path`` instances implement rename() and replace()."""
     # Rename 'foo' to 'bar'.
     path = session.fs.path('foo')
-    assert path.open('w').write(u'some text') == 9L
-    target = session.fs.path('bar')
-    assert path.exists()
-    assert not target.exists()
-    path.rename(target)
-    assert not session.fs.path('foo').exists()
-    assert session.fs.path('bar').exists()
-    assert target.open().read() == 'some text'
-    assert path.name == 'bar'
-    # Replace 'replaced' with 'bar'.
-    assert session.fs.path('replaced').open('w').write(u'another text') == 12L
-    path.replace('replaced')
-    assert session.fs.path('replaced').open().read() == u'some text'
-    assert not session.fs.path('bar').exists()
-
-    session.fs.path('replaced').unlink()  # Cleanup.
+    try:
+        path.open('w').write(u'some text')
+        target = session.fs.path('bar')
+        assert path.exists()
+        assert not target.exists()
+        path.rename(target)
+        assert not session.fs.path('foo').exists()
+        assert session.fs.path('bar').exists()
+        assert target.open().read() == 'some text'
+        assert path.name == 'bar'
+        # Replace 'replaced' with 'bar'.
+        session.fs.path('replaced').open('w').write(u'another text')
+        path.replace('replaced')
+        assert session.fs.path('replaced').open().read() == u'some text'
+        assert not session.fs.path('bar').exists()
+    finally:
+        session.fs.path('replaced').unlink()  # Cleanup.
 
 
 def test_resolve(session):

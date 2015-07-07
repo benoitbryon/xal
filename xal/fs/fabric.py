@@ -127,7 +127,7 @@ class FabricFileSystemProvider(FileSystemProvider):
               .format(path=local_path, pattern=pattern)
         result = self.xal_session.sh.run(cmd)
         result = result.stdout.strip().split('\n')
-        result = [self(p) for p in result]  # Convert to Path objects.
+        result = [path / self(p) for p in result]  # Convert to Path objects.
         return result
 
     def group(self, path):
@@ -191,7 +191,8 @@ class FabricFileSystemProvider(FileSystemProvider):
     def open(self, path, mode='r', buffering=-1, encoding=None, errors=None,
              newline=None):
         local_path = self.resolve(path)
-        return self.xal_session.client.ssh_client.open(unicode(local_path))
+        return self.xal_session.client.ssh_client.open(
+            unicode(local_path), mode)
 
     def owner(self, path):
         local_path = self.resolve(path)
@@ -202,13 +203,24 @@ class FabricFileSystemProvider(FileSystemProvider):
         raise KeyError()
 
     def rename(self, path, target):
-        raise NotImplementedError()
+        local_path = self.resolve(path)
+        local_target = self.resolve(target)
+        with fabric.context_managers.hide('running', 'stdout', 'stderr'):
+            return fabtools.files.move(
+                unicode(local_path),
+                unicode(local_target))
 
     def replace(self, path, target):
-        raise NotImplementedError()
+        local_path = self.resolve(path)
+        local_target = self.resolve(target)
+        with fabric.context_managers.hide('running', 'stdout', 'stderr'):
+            return fabtools.files.move(
+                unicode(local_path),
+                unicode(local_target))
 
     def rglob(self, path, pattern):
-        raise NotImplementedError()
+        recursive_pattern = '**/{pattern}'.format(pattern=pattern)
+        return self.glob(path, recursive_pattern)
 
     def symlink_to(self, path, target, target_is_directory=False):
         local_path = self.resolve(path)
@@ -218,7 +230,12 @@ class FabricFileSystemProvider(FileSystemProvider):
         return None
 
     def touch(self, path, mode=0o777, exist_ok=True):
-        raise NotImplementedError()
+        local_path = self.resolve(path)
+        cmd = "touch {path}".format(path=local_path)
+        self.xal_session.sh.run(cmd)
+        if mode is not None:
+            self.chmod(path, mode)
+        return self(path)
 
     def unlink(self, path):
         local_path = self.resolve(path)
