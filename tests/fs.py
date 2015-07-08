@@ -1,5 +1,6 @@
 """Tests around filesystem API: paths, directories and files."""
 import os
+import stat
 
 
 def test_registry(session):
@@ -155,15 +156,15 @@ def test_stat(session):
     """``Path`` instances implement stat()."""
     path = session.fs.path('tests/fixtures/hello.txt')
     assert path.stat().st_size == 13
-    assert path.stat().st_mode == 33188
 
 
 def test_chmod(session):
     """``Path`` instances implement chmod()."""
     path = session.fs.path('tests/fixtures/hello.txt')
-    assert path.stat().st_mode == 33188
+    path.chmod(0o644)
+    assert stat.S_IMODE(path.stat().st_mode) == 0o644
     path.chmod(0o444)
-    assert path.stat().st_mode == 33060
+    assert stat.S_IMODE(path.stat().st_mode) == 0o444
     path.chmod(0o644)
 
 
