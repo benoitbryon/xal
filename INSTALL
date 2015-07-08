@@ -2,14 +2,73 @@
 Installation
 ############
 
-This code is open-source. See :doc:`/about/license` for details.
+This document covers installation of `xal` for typical usage. If you want to
+setup a development environment, see :doc:`/contributing` documentation.
 
-If you want to contribute to the code and get a development environment, you
-should go to :doc:`/contributing` documentation.
+.. note:: `xal` is free software. See :doc:`/about/license` for details.
 
-Install the package with your favorite Python installer. As an example, with
-pip:
+
+*************
+Prerequisites
+*************
+
+`xal` requires `Python` version 2.7. Other versions may work, but they are not
+part of the test suite at the moment.
+
+
+**********
+Standalone
+**********
+
+In order to use `xal` in interactive Python shells or in standalone scripts,
+you can install `xal` directly with your favorite Python package manager. As an
+example with `pip`_:
 
 .. code:: sh
 
    pip install xal
+
+
+************
+As a library
+************
+
+In order to use `xal` as a dependency of another project, you should add
+``xal`` to the requirements of your main project. Typically in
+:file:`setup.py`:
+
+.. code:: python
+
+   from setuptools import setup
+
+   setup(
+       install_requires=[
+           'xal',
+           #...
+       ]
+       # ...
+   )
+
+Then when you install your main project with your favorite package manager
+(like `pip`_), `xal` will automatically be installed.
+
+
+*****
+Check
+*****
+
+Check `xal` has been installed:
+
+.. code:: sh
+
+   python -c "import xal; print(xal.__version__)"
+
+You should get `xal`'s version.
+
+
+.. rubric:: References
+
+.. target-notes::
+
+.. _`Python`: https://www.python.org/
+.. _`pip`: https://pip.pypa.io
