@@ -9,7 +9,9 @@ Contents
    :maxdepth: 2
 
    install
-   resources/index
+   overview
+   resources/fs
+   resources/sh
    about/index
    presentations/index
    contributing

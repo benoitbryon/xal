@@ -18,6 +18,7 @@ class Session(object):
         #: Every client should have at least one provider identified by
         #: "registry".
         self.registry = registry
+
         # Attach session to registry for reverse relationship.
         self.registry.xal_session = self
 

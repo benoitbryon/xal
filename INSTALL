@@ -28,6 +28,14 @@ example with `pip`_:
 
    pip install xal
 
+Depending on the kind of sessions you need, install additional dependencies:
+
+.. code:: sh
+
+   pip install xal[local]  # For local sessions.
+   pip install xal[ssh]  # For SSH sessions.
+   pip install xal[local,ssh]  # For both local and SSH sessions.
+
 
 ************
 As a library

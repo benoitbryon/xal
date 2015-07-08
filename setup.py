@@ -62,6 +62,7 @@ TEST_REQUIREMENTS = ['tox']
 CMDCLASS = {'test': Tox}
 EXTRA_REQUIREMENTS = {
     'test': TEST_REQUIREMENTS,
+    'local': [],
     'ssh': ['fabric', 'fabtools'],
 }
 

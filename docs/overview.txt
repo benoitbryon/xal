@@ -1,0 +1,82 @@
+########
+Overview
+########
+
+This document introduces `xal`'s concepts.
+
+
+*********
+Resources
+*********
+
+`xal` resources are Python representations of system resources such as files,
+processes, users... One of `xal`'s main purpose is to define a consistent set
+of resources with a reference API.
+
+.. note::
+
+   Implementation of resources is not `xal`'s main scope. `xal` focuses on API.
+   That said, as a proof of concept, `xal` implements some resource providers.
+
+   **Work in progress!** The resources below are the ones currently implemented
+   in `xal`. Many resources have not been implemented yet. Learn more about
+   planned features in `bugtracker`_.
+
+There is a base class for all resources, then each resource has its own class.
+
+Here are resources provided by `xal` itself at the moment:
+
+* :doc:`/resources/fs`
+* :doc:`/resources/sh`
+
+
+********
+Sessions
+********
+
+In `xal`, sessions encapsulate implementation of resources APIs.
+
+Sessions hold a registry of providers. As an example, ``LocalSession().sh`` is
+mapped to :class:`~xal.sh.local.LocalShProvider`, which itself implements the
+:doc:`API for sh resources </resources/sh>`.
+
+Sessions are just routers that redirect calls to the right provider, as
+configured in registry.
+
+At the moment, `xal` provides a base :class:`~xal.session.Session` class, and,
+for convenience,two classes with pre-configured registries:
+
+* :class:`~xal.session.local.LocalSession` for use on localhost. Providers
+  basically use Python builtins.
+
+* :class:`~xal.session.local.FabricSession` for use on remote SSH sessions.
+  Providers use Fabric and Fabtools.
+
+.. warning::
+
+   Default ``pip install xal`` doesn't install specific dependencies for SSH or
+   local sessions. You need things like ``pip install xal[ssh]``.
+   See :doc:`/install` for details.
+
+
+******
+Client
+******
+
+Client is a special provider for `xal` sessions. Its primary purpose it to
+encapsulate connection with the system, hence the ``session.client.connect()``.
+
+
+*********
+Providers
+*********
+
+Typically, providers implement API of resources. Method signature usually take
+a resource instance as argument.
+
+
+.. rubric:: References
+
+.. target-notes::
+
+.. _`bugtracker`: https://github.com/benoitbryon/xal/issues
