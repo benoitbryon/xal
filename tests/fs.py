@@ -99,12 +99,12 @@ def test_purepath_methods(session):
     assert joined == session.fs.path('resources/fs.txt')
 
     # as_posix()
-    assert session.fs.path('/home/benoit/resources').as_posix() == \
-        '/home/benoit/resources'
+    assert session.fs.path('/home/user/resources').as_posix() == \
+        '/home/user/resources'
 
     # as_uri()
-    assert session.fs.path('/home/benoit/resources').as_uri() == \
-        'file:///home/benoit/resources'
+    assert session.fs.path('/home/user/resources').as_uri() == \
+        'file:///home/user/resources'
 
     # is_absolute()
     assert session.fs.path('relative').is_absolute() is False
@@ -191,7 +191,8 @@ def test_glob(session):
 
 def test_group(session):
     """``Path`` instances implement group()."""
-    assert session.fs.path('.').group() == 'benoit'
+    current_group = session.sh.run('id --group --name').stdout.strip()
+    assert session.fs.path('.').group() == current_group
 
 
 def test_is_dir(session):
