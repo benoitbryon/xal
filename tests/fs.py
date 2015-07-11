@@ -331,22 +331,10 @@ def test_rglob(session):
     """``Path`` instances implement rglob()."""
     from xal.fs.resource import Path
 
-    assert sorted(session.fs.path('docs').rglob('*.txt')) == [
-        Path('docs/about/alternatives.txt'),
-        Path('docs/about/authors.txt'),
-        Path('docs/about/changelog.txt'),
-        Path('docs/about/index.txt'),
-        Path('docs/about/license.txt'),
-        Path('docs/about/vision.txt'),
-        Path('docs/contributing.txt'),
-        Path('docs/index.txt'),
-        Path('docs/install.txt'),
-        Path('docs/presentations/2013-europython/index.txt'),
-        Path('docs/presentations/index.txt'),
-        Path('docs/presentations/xal.txt'),
-        Path('docs/resources/fs.txt'),
-        Path('docs/resources/index.txt'),
-        Path('docs/resources/sh.txt'),
+    assert sorted(session.fs.path('tests/fixtures').rglob('*.txt')) == [
+        Path('tests/fixtures/hello.txt'),
+        Path('tests/fixtures/sample-folder/sample-1.txt'),
+        Path('tests/fixtures/sample-folder/sample-2.txt'),
     ]
 
 
