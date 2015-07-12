@@ -2,20 +2,96 @@
 xal
 ###
 
-`xal` is a contextual execution framework for Python.
+`xal` is a Python library which provides
+an **high-level API to interact with system resources** (files, commands, ...)
+and **low-level execution** via third-parties (stdlib, Fabric, Salt, ...).
 
-The concept is:
+The concept is you open a session in system, then you run commands within the
+session:
 
-* scripts are written with session as argument, they use an high-level abstract
-  API to run operations (such as managing files or running commands) into the
-  session;
+* session is specific, it holds the execution context, it knows the low-level
+  implementation.
 
-* sessions encapsulate API implementation: local Python shell, Fabric, Salt...
+* commands use a generic API. You could run the same commands in another
+  session.
 
-The main goals are:
+.. tip::
 
-* Python users (including sysadmins and devops) have a consistent API to write
-  scripts that perform operations on system.
+   "xal" is the acronym of "eXecution Abstraction Layer".
+
+
+*******
+Example
+*******
+
+Let's initialize a session on local system:
+
+>>> import xal
+>>> local_session = xal.LocalSession()
+>>> local_session.client.connect()
+True
+
+In this session, we can manage files:
+
+>>> path = local_session.fs.path('hello-xal.txt')
+>>> path.exists()
+False
+>>> written = path.open('w').write(u'Hello world!')
+>>> path.exists()
+True
+>>> print path.open().read()
+Hello world!
+>>> path.unlink()
+>>> path.exists()
+False
+
+We can also execute sh commands:
+
+>>> result = local_session.sh.run(u"echo 'Goodbye!'")
+>>> print result.stdout
+Goodbye!
+<BLANKLINE>
+
+Now let's make a function that does the same. It takes the session as input
+argument:
+
+>>> def hello(session):
+...     path = session.fs.path('hello-xal.txt')
+...     path.open('w').write(u"Hello world!")
+...     print path.open().read()
+...     path.unlink()
+...     print session.sh.run(u"echo 'Goodbye!'").stdout
+
+Of course, we can run it in local session:
+
+>>> hello(local_session)
+Hello world!
+Goodbye!
+<BLANKLINE>
+
+What's nice is that we can reuse the same function in another session. Let's
+create a remote SSH session using Fabric...
+
+>>> remote_session = xal.FabricSession()
+>>> remote_session.client.connect(host='localhost')
+True
+
+... then just run the same function with this remote session:
+
+>>> hello(remote_session)
+Hello world!
+Goodbye!
+<BLANKLINE>
+
+
+***********
+Motivations
+***********
+
+`xal` ideas are:
+
+* Python users (including sysadmins and devops) have a consistent and unified
+  API to write scripts that perform operations on system.
 
 * such scripts are portable, i.e. they can be executed in various environments.
   Whatever the operating system, whatever the protocol to connect to and
@@ -27,53 +103,6 @@ The main goals are:
 * it is easier to switch from one tool to another: reconfigure the session,
   don't change the scripts. Develop scripts locally, test them remotely via
   Fabric, distribute them using Salt... or vice-versa.
-
-* interactive Python shell gets more powerful.
-
-.. note::
-
-   "xal" is the acronym of "eXecution Abstraction Layer".
-
-
-*******
-Example
-*******
-
-So, let's create a function that manages files or run shell commands. It takes
-the execution context as input argument:
-
->>> def hello_world(session):
-...     """Return content of file 'hello.txt' or echo 'Hello world!'."""
-...     try:
-...         return session.fs.path('hello.txt').open().read()
-...     except IOError:  # The file doesn't exist.
-...         result = session.sh.run("echo 'Hello world!'")
-...         return result.stdout
-
-Ok, now let's execute the function on local machine. First initialize a local
-session...
-
->>> import xal
->>> local_session = xal.LocalSession()
->>> local_session.client.connect()
-True
-
-... then run the function within this local session:
-
->>> hello_world(local_session)
-'Hello world!\n'
-
-What's nice is that we can reuse the same function in another session. Let's
-create a remote SSH session using Fabric...
-
->>> remote_session = xal.FabricSession()
->>> remote_session.client.connect(host='localhost')
-True
-
-... then just run the same function with this remote session:
-
->>> hello_world(remote_session)
-'Hello world!\n'
 
 
 ****************
