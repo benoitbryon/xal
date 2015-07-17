@@ -2,211 +2,276 @@
 Paths, files and directories
 ############################
 
-`xal` provides tools to manage files and directories.
+`xal` provides interface to manage files and directories.
+
+.. tip::
+
+   `xal`'s path API is widely inspired by :mod:`pathlib`, which is Python's
+   standard API to manage paths. See also `differences with pathlib`_ section.
+
+.. testsetup::
+
+   import xal
+   session = xal.LocalSession()
+   here = session.fs.path.cwd()
+   assert here.name == 'docs'  # Don't mess up unsupported environments!
+   session.fs.path.cd(here.parent)  # Move to repository root.
+
+
+*********************
+Use fs.path interface
+*********************
+
+Let's consider a `xal` :doc:`session </sessions>`:
+
+.. doctest::
+
+   >>> import xal
+   >>> session = xal.LocalSession()
+   >>> session.client.connect()
+   True
+
+Path API is registered as ``fs.path`` in `xal`'s builtin :doc:`/sessions`:
+
+.. doctest::
+
+   >>> session.fs.path  # doctest: +ELLIPSIS
+   <xal.fs.local.LocalPathProvider object at 0x...>
+
+.. note::
+
+   ``fs.path`` may be renamed to ``path`` in future releases.
+
+
+****************
+PathProvider API
+****************
+
+Here are details about `xal`'s ``fs.path`` interface.
+
+Path resource factory
+=====================
+
+The ``fs.path`` interface can be used as a factory to create
+:class:`~xal.fs.resource.Path` resources:
+
+.. doctest::
+
+   >>> path = session.fs.path('tests/fixtures')
+   >>> path
+   Path('tests/fixtures')
+
+See section about `path objects <#path-objects>`_ below for details about
+:class:`~xal.fs.resource.Path` instances.
+
+cd(path)
+========
+
+Changes working directory.
+
+It can be used as a context manager:
+
+.. doctest::
+
+   >>> former_path = session.fs.path.cwd()
+   >>> with session.fs.path.cd('tests') as new_path:
+   ...     session.fs.path.cwd() == new_path
+   True
+   >>> session.fs.path.cwd() == former_path
+   True
+
+Or standalone:
+
+.. doctest::
+
+   >>> former_path = session.fs.path.cwd()
+   >>> session.fs.path.cd('tests')  # doctest: +ELLIPSIS
+   Path('/.../tests')
+
+Accepts text or path objects:
+
+   >>> session.fs.path.cd(former_path)  # doctest: +ELLIPSIS
+   Path('/...')
+
+.. note::
+
+   Path instances also have a ``cd()`` method.
+
+sep
+===
+
+This is an equivalent of :attr:`os.path.sep` for current session.
+
+In local session, it is obviously the same value as :attr:`os.path.sep`:
+
+.. doctest::
+
+   >>> import os
+   >>> session.fs.path.sep == os.path.sep
+   True
+
+pure_path(path)
+===============
+
+Returns Path instance not related to session. It may be useful in some
+situations where you need to compare paths on `pure path
+<#pure-paths-vs-concrete-paths>`_ only.
+
+.. doctest::
+
+   >>> session.fs.path('foo').xal_session is session
+   True
+   >>> session.fs.path.pure_path('foo').xal_session is None
+   True
 
 
 ************
 Path objects
 ************
 
-In builtin `xal` sessions (:class:`~xal.session.local.LocalSession` and
-:class:`~xal.session.fabric.FabricSession`), there is a ``fs`` interface. This
-interface exposes a ``path`` API to manage paths as resources:
-
-.. literalinclude:: /../tests/fs.py
-   :language: python
-   :pyobject: test_registry
-
 The ``fs.path`` interface can be used as a factory to create
 :class:`~xal.fs.resource.Path` resources:
 
-.. literalinclude:: /../tests/fs.py
-   :language: python
-   :pyobject: test_path_factory
+.. doctest::
 
-``Path`` instance can be converted to text:
+   >>> path = session.fs.path('tests/fixtures')
+   >>> path
+   Path('tests/fixtures')
+   >>> print path
+   tests/fixtures
 
-.. literalinclude:: /../tests/fs.py
-   :language: python
-   :pyobject: test_path_repr
+Paths can be constructed with anything that can be converted to text, including
+path objects themselves:
 
-.. literalinclude:: /../tests/fs.py
-   :language: python
-   :pyobject: test_path_str
+.. doctest::
 
-.. tip::
+   >>> session.fs.path(session.fs.path('foo'))
+   Path('foo')
 
-   `xal`'s path API is widely inspired by :mod:`pathlib`. As a `Python`
-   developer, if you feel familiar with :mod:`pathlib`, then you may jump to
-   `differences with pathlib`_ section.
+Pure paths VS concrete paths
+============================
+
+As in :mod:`pathlib`, there is a difference between "pure paths" and "concrete
+paths":
+
+* "pure paths" are the ones that are not attached to a session:
+
+  .. doctest::
+
+     >>> path = session.fs.path.pure_path('foo')
+     >>> path.xal_session is None
+     True
+
+* "concrete paths" are the ones attached to a session.
+
+  .. doctest::
+
+     >>> path = session.fs.path('foo')
+     >>> path.xal_session is session
+     True
+
+Comparison
+==========
+
+Pure paths are compared with respect to pure path only, even when compared to
+concrete paths:
+
+.. doctest::
+
+   >>> session.fs.path.pure_path('foo') == session.fs.path.pure_path('foo')
+   True
+   >>> session.fs.path.pure_path('foo') == session.fs.path('foo')
+   True
+
+Concrete paths are compared with respect to session:
+
+.. doctest::
+
+   >>> session.fs.path('foo') == session.fs.path('foo')
+   True
+   >>> remote_session = xal.FabricSession()
+   >>> session.fs.path('foo') == remote_session.fs.path('foo')
+   False
+
+Concatenation
+=============
+
+Use slash (division) operator ``/`` to concatenate paths:
+
+.. doctest::
+
+   >>> session.fs.path('foo') / session.fs.path('bar')
+   Path('foo/bar')
 
 Properties
 ==========
 
-``Path`` instances have properties just like :mod:`pathlib`'s pure paths:
+``Path`` instances have the same properties as :mod:`pathlib`'s pure paths:
 
-.. literalinclude:: /../tests/fs.py
-   :language: python
-   :pyobject: test_path_properties
+.. doctest::
 
+   >>> path = session.fs.path('/home/user/hello.txt.cpold')
+   >>> path.drive
+   ''
+   >>> path.root
+   '/'
+   >>> path.anchor
+   '/'
+   >>> path.parents
+   (Path('/home/user'), Path('/home'), Path('/'))
+   >>> path.parent
+   Path('/home/user')
+   >>> path.name
+   'hello.txt.cpold'
+   >>> path.suffix
+   '.cpold'
+   >>> path.suffixes
+   ['.txt', '.cpold']
+   >>> path.stem
+   'hello.txt'
 
 Methods
 =======
 
 ``Path`` instances have methods like :class:`pathlib.PurePath`:
 
-.. literalinclude:: /../tests/fs.py
-   :language: python
-   :pyobject: test_purepath_methods
+* ``as_posix()``
+* ``as_uri()``
+* ``is_absolute()``
+* ``is_reserved()``
+* ``joinpath(*other)``
+* ``match(pattern)``
+* ``relative_to(other)``
+* ``with_name(name)``
+* ``with_suffix(suffix)``
 
+And methods like like :class:`pathlib.Path`:
 
-Methods like pathlib.Path
-=========================
-
-stat()
-------
-
-.. literalinclude:: /../tests/fs.py
-   :language: python
-   :pyobject: test_stat
-
-chmod(mode)
------------
-
-.. literalinclude:: /../tests/fs.py
-   :language: python
-   :pyobject: test_chmod
-
-exists()
---------
-
-.. literalinclude:: /../tests/fs.py
-   :language: python
-   :pyobject: test_exists
-
-glob(pattern) and rglob(pattern)
---------------------------------
-
-.. literalinclude:: /../tests/fs.py
-   :language: python
-   :pyobject: test_glob
-
-.. literalinclude:: /../tests/fs.py
-   :language: python
-   :pyobject: test_rglob
-
-group()
--------
-
-.. literalinclude:: /../tests/fs.py
-   :language: python
-   :pyobject: test_group
-
-is_dir()
---------
-
-.. literalinclude:: /../tests/fs.py
-   :language: python
-   :pyobject: test_is_dir
-
-is_file()
----------
-
-.. literalinclude:: /../tests/fs.py
-   :language: python
-   :pyobject: test_is_file
-
-is_symlink() and symlink_to(target, target_is_directory=False)
---------------------------------------------------------------
-
-.. literalinclude:: /../tests/fs.py
-   :language: python
-   :pyobject: test_symlink
-
-is_socket()
------------
-
-.. literalinclude:: /../tests/fs.py
-   :language: python
-   :pyobject: test_is_socket
-
-is_fifo()
----------
-
-.. literalinclude:: /../tests/fs.py
-   :language: python
-   :pyobject: test_is_fifo
-
-is_block_device()
------------------
-
-.. literalinclude:: /../tests/fs.py
-   :language: python
-   :pyobject: test_is_block_device
-
-is_char_device()
-----------------
-
-.. literalinclude:: /../tests/fs.py
-   :language: python
-   :pyobject: test_is_char_device
-
-iterdir()
----------
-
-.. literalinclude:: /../tests/fs.py
-   :language: python
-   :pyobject: test_iterdir
-
-lchmod()
---------
-
-lstat()
--------
-
-mkdir(mode=0o777, parents=False) and rmdir()
---------------------------------------------
-
-.. literalinclude:: /../tests/fs.py
-   :language: python
-   :pyobject: test_mkdir
-
-
-open(mode='r', buffering=-1, encoding=None, errors=None, newline=None)
-----------------------------------------------------------------------
-
-.. literalinclude:: /../tests/fs.py
-   :language: python
-   :pyobject: test_open
-
-owner()
--------
-
-.. literalinclude:: /../tests/fs.py
-   :language: python
-   :pyobject: test_owner
-
-rename() and replace()
-----------------------
-
-.. literalinclude:: /../tests/fs.py
-   :language: python
-   :pyobject: test_rename
-
-resolve()
----------
-
-.. literalinclude:: /../tests/fs.py
-   :language: python
-   :pyobject: test_resolve
-
-touch(mode=0o777, exist_ok=True) and unlink()
----------------------------------------------
-
-.. literalinclude:: /../tests/fs.py
-   :language: python
-   :pyobject: test_touch
-
+* ``stat()``
+* ``chmod(mode)``
+* ``exists()``
+* ``glob(pattern)`` 
+* ``group()``
+* ``is_dir()``
+* ``is_file()``
+* ``is_symlink()``
+* ``is_socket()``
+* ``is_fifo()``
+* ``is_block_device()``
+* ``is_char_device()``
+* ``iterdir()``
+* ``lchmod()``
+* ``lstat()``
+* ``mkdir(mode=0o777, parents=False)``
+* ``open(mode='r', buffering=-1, encoding=None, errors=None, newline=None)``
+* ``owner()``
+* ``rename()`` and ``replace()``
+* ``resolve()``
+* ``rglob(pattern)``
+* ``rmdir()``
+* ``symlink_to(target, target_is_directory=False)``
+* ``touch(mode=0o777, exist_ok=True)``
+* ``unlink()``
 
 Differences with pathlib
 ========================
@@ -225,11 +290,6 @@ cwd()
 `xal`, it is a method of the instance of provider API, generally
 ``session.fs.cwd()``.
 
-mkdir() as a context manager
-----------------------------
-
-with mkdir() block destroys created tree on exit. # TODO
-
 resolve() works with non-existent files
 ---------------------------------------
 
@@ -243,140 +303,7 @@ touch() returns Path instance
 pathlib.Path.touch() returns None, whereas xal's Path.touch() returns Path
 instance, so that calls can be chained.
 
+mkdir() as a context manager
+----------------------------
 
-******
-fs API
-******
-
-FileSystem resource
-===================
-
-.. autoclass:: xal.fs.resource.FileSystem
-
-.. doctest::
-
-   >>> from xal.fs.resource import FileSystem
-   >>> def demo_resource(session):
-   ...     """Demonstrate use of ``FileSystem`` resource."""
-   ...     fs = session.fs  # Just a shortcut.
-   ...
-   ...     # ``session.fs`` is a resource factory.
-   ...     resource = fs('test-fs')
-   ...     assert isinstance(resource, FileSystem)
-   ...
-   ...     # Just use path as strings.
-   ...     assert str(resource) == 'test-fs'
-   ...
-   ...     # Paths remain relative until they are actually used. Absolute
-   ...     # values are used as soon as filesystem operation is performed.
-   ...     assert resource.is_relative()
-   ...     created_resource = resource.mkdir()
-   ...     assert created_resource.is_absolute()
-   ...     assert resource.is_relative()  # Original value is preserved.
-   ...
-   ...     # Cleanup.
-   ...     fs.rm(created_resource)
-
-cd
-==
-
-.. automethod:: xal.fs.resource.FileSystem.cd
-
-.. doctest::
-
-   >>> def demo_cd(session):
-   ...     """Demonstrate use of ``cd``."""
-   ... 	   fs = session.fs  # Just a shortcut.
-   ...
-   ...     # Let's create a new directory.
-   ...     path = fs.mkdir('test-fs')
-   ...
-   ...     # Change working directory.
-   ...     initial_path = fs.cwd()
-   ...     assert fs.cwd() != path
-   ...     with fs.cd(path) as sub_path:
-   ...         assert fs.cwd() == path == sub_path
-   ...         assert sub_path.parent == initial_path
-   ...     assert fs.cwd() == initial_path
-   ...
-   ...     # Also works without context manager.
-   ...     # Notice that once used, paths are absolute.
-   ...     rel_path = fs('test-fs')
-   ...     assert rel_path.is_relative()
-   ...     abs_path = rel_path.cd()
-   ...     assert abs_path.is_absolute()
-   ...
-   ...     # Cleanup.
-   ...     fs.cd(initial_path)
-   ...     fs.rm(path)
-
-mkdir
-=====
-
-.. automethod:: xal.fs.resource.FileSystem.mkdir
-
-.. doctest::
-
-   >>> def demo_mkdir(session):
-   ...     """Demonstrate use of ``mkdir``."""
-   ...     fs = session.fs  # Just a shortcut.
-   ...
-   ...     # Let's create a new directory.
-   ...     assert not fs.exists('test-fs')
-   ...     path = fs.mkdir('test-fs')
-   ...     assert fs.exists('test-fs')
-   ...
-   ...     # mkdir() returns absolute path, even if created from relative
-   ...     # value.
-   ...     assert str(path) != 'test-fs'
-   ...     assert path.is_absolute()
-   ...
-   ...     # Cleanup.
-   ...     fs.rm(path)
-
-
-*********
-Providers
-*********
-
-Local
-=====
-
-Let's execute demo function above in local session.
-
-First setup a local session:
-
-.. doctest::
-
-   >>> from xal.session.local import LocalSession
-   >>> session = LocalSession()
-
-Then run generic code within specific session:
-
-.. doctest::
-
-   >>> demo_resource(session)
-   >>> demo_cd(session)
-   >>> demo_mkdir(session)
-
-SSH using Fabric
-================
-
-Let's do the same over SSH using Fabric!
-
-Setup some SSH session:
-
-.. doctest::
-
-   >>> from xal.session.fabric import FabricSession
-   >>> session = FabricSession()
-   >>> session.client.connect('localhost')
-   True
-
-Then run generic code within specific session:
-
-.. doctest::
-
-   >>> demo_resource(session)
-   >>> demo_cd(session)
-   >>> demo_mkdir(session)
+with mkdir() block destroys created tree on exit. # TODO

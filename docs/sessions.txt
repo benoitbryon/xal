@@ -1,0 +1,141 @@
+########
+Sessions
+########
+
+In `xal`, sessions encapsulate implementation of resources APIs.
+
+
+**********
+Quickstart
+**********
+
+In order to use `xal` or related libraries:
+
+1. Setup session instance
+2. Log in session
+3. Use session's interfaces, a.k.a. :doc:`/resources/index`
+
+.. doctest::
+
+   >>> import xal
+   >>> session = xal.LocalSession()
+   >>> session.client.connect()
+   True
+   >>> session.sh.run('echo -n "Hello"').stdout
+   'Hello'
+
+In order to write `xal`-powered scripts or libraries:
+
+1. Receive session instance as an input argument
+2. Use session's interfaces, a.k.a. :doc:`/resources/index`
+3. Users of your library will care of session initialization
+
+.. doctest::
+
+   >>> def hello(session):
+   ...    return session.sh.run('echo -n "Hello"').stdout
+   
+   >>> hello(session)
+   'Hello'
+
+At the moment, `xal` provides two pre-configured session classes:
+
+* :class:`~xal.session.local.LocalSession` for use on localhost. Basically uses
+  Python builtins.
+
+  Client's ``connect()`` method takes no arguments:
+
+  .. doctest::
+
+     >>> local_session = xal.LocalSession()
+     >>> local_session.client.connect()
+     True
+
+* :class:`~xal.session.local.FabricSession` for use on remote SSH sessions.
+  Uses Fabric and Fabtools.
+
+  Client's ``connect()`` method takes ``host`` argument. Other SSH
+  configuration is (currently) taken from ssh_config:
+
+  .. doctest::
+
+     >>> fabric_session = xal.FabricSession()
+     >>> fabric_session.client.connect(host='localhost')
+     True
+
+
+.. warning::
+
+   Default ``pip install xal`` doesn't install specific dependencies for SSH or
+   local sessions. You need things like ``pip install xal[ssh]``.
+   See :doc:`/install` for details.
+
+
+******
+Client
+******
+
+Client is a special provider for `xal` sessions. Its primary purpose it to
+encapsulate connection with the system, hence the ``session.client.connect()``.
+
+What's make "client" interface special is that the signature of ``connect()``
+method is specific to providers.
+
+See `quickstart <#quickstart>`_ above for basic use cases and connection
+options.
+
+
+********
+Registry
+********
+
+Sessions hold a registry of providers. As an example, ``LocalSession().sh`` is
+mapped to :class:`~xal.sh.local.LocalShProvider`, which itself implements the
+:doc:`API for sh resources </resources/sh>`.
+
+**In most situations, you don't have to bother with registry**, because session
+instance acts as a router to adequate item in registry.
+
+.. doctest::
+
+   >>> session.registry  # doctest: +ELLIPSIS
+   <xal.registry.Registry object at 0x...>
+   >>> sorted(session.registry.items.keys())
+   ['client', 'dir', 'fs', 'sh', 'sys']
+   >>> session.registry('sh')  # doctest: +ELLIPSIS
+   <xal.sh.local.LocalShProvider object at 0x...>
+   >>> session.sh is session.registry('sh')
+   True
+
+
+*********************
+xal_session attribute
+*********************
+
+At the moment, `xal` makes big use of a special ``xal_session`` attribute.
+
+**In most situations, you don't have to bother with xal_session attribute.**
+
+But, if you are curious, here are some hints:
+
+* when providers are registered in session, they are assigned a reference to
+  the session as ``xal_session`` attribute. It makes it possible, in providers'
+  implementation, to use other interfaces of the session.
+
+  As an example, Fabric-based implementation of path API uses session's sh
+  API via ``self.xal_session.sh``:
+
+  .. literalinclude:: /../xal/fs/fabric.py
+     :language: python
+     :pyobject: FabricFileSystemProvider.cwd
+
+* when providers instanciate a ressource, they assign a reference to the
+  session as ``xal_session`` attribute. It makes it possible to have generic
+  resource classes that take advantage of providers' specific implementation.
+
+  As an example, Path resource is generic, but most methods just redirect to
+  ``self.xal_session.fs.path`` with ``self`` as first argument:
+
+  .. literalinclude:: /../xal/fs/resource.py
+     :language: python
+     :pyobject: Path.chmod

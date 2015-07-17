@@ -10,6 +10,9 @@ Contents
 
    install
    overview
+   sessions
+   providers
+   resources/index
    resources/fs
    resources/sh
    about/index

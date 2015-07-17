@@ -46,6 +46,10 @@ test:
 	$(TOX)
 
 
+watch:
+	$(PIP) install gorun
+	gorun.py gorun_settings.py
+
 #: documentation - Build documentation (Sphinx, README, ...)
 documentation: sphinx readme
 

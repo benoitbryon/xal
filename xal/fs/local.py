@@ -32,7 +32,7 @@ class LocalFileSystemProvider(FileSystemProvider):
         local_path = pathlib.Path(str(local_path))
         # Remember initial path, for use at ``__exit__()``.
         new_path = self(str(local_path))
-        new_path.cwd_backup = self.cwd()
+        new_path._exit_cwd = self.cwd()
         # Actually change working directory.
         os.chdir(str(local_path))
         return new_path

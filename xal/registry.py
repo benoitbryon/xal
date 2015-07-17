@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Default XAL registry implementation."""
 from xal.provider import Provider
 
@@ -8,16 +7,15 @@ class Registry(Provider):
     def __init__(self, *args, **kwargs):
         """Constructor."""
         super(Registry, self).__init__(*args, **kwargs)
+
+        #: Catalog of providers.
+        #: There may be more providers than interfaces available: the registry
+        #: can store several providers for one interface, but it will remember
+        #: one as active.
         self.items = {}
-        """Catalog of providers.
 
-        There may be more providers than interfaces available: the registry
-        can store several providers for one interface, but it will remember
-        one as active.
-
-        """
+        #: Mapping of active providers for interfaces.
         self.active = {}
-        """Mapping of active providers for interfaces."""
 
     def get_provider_name(self, provider):
         """Guess best provider name."""

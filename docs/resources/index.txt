@@ -1,0 +1,26 @@
+*********
+Resources
+*********
+
+`xal` resources are Python representations of system resources such as files,
+sh commands, processes, users... One of `xal`'s main purpose is to define a
+consistent set of resources with a reference API.
+
+There is a base class for all resources, then each resource has its own class.
+
+Here are resources provided by `xal` itself at the moment:
+
+* :doc:`/resources/fs`
+* :doc:`/resources/sh`
+
+.. note::
+
+   As a proof of concept, `xal` implements some resources. But is is a **work
+   in progress!** Learn and contribute around features in `bugtracker`_.
+
+
+.. rubric:: References
+
+.. target-notes::
+
+.. _`bugtracker`: https://github.com/benoitbryon/xal/issues

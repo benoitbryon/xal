@@ -29,3 +29,9 @@ class FileSystemProvider(ResourceProvider):
 
     def abspath(self, path):
         raise NotImplementedError()
+
+    def pure_path(self, path):
+        """Return Path instance not attached to a session."""
+        path = self(path)
+        path.xal_session = None
+        return path

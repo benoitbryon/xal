@@ -1,0 +1,64 @@
+##################
+Resource providers
+##################
+
+Providers implement API of resources. Most of the API is documented via
+:doc:`/resources/index`, so this document will focus on things specific to
+providers.
+
+As mentioned in :doc:`/sessions`, access to providers is made via session's
+registry:
+
+.. doctest::
+
+   >>> import xal
+   >>> session = xal.LocalSession()
+   >>> session.sh  # doctest: +ELLIPSIS
+   <xal.sh.local.LocalShProvider object at 0x...>
+
+We will use this ``sh`` provider in the examples below...
+
+
+********************************
+Providers are resource factories
+********************************
+
+One provider implements API of one resource type. As an example, ``ShProvider``
+deals with ``ShCommand`` resource. Providers are callables, and when you call
+them, you create a resource:
+
+.. doctest::
+
+   >>> session.sh('echo "Hello"')  # doctest: +ELLIPSIS
+   ShCommand(echo "Hello")
+
+
+***********************************
+Providers have system-level methods
+***********************************
+
+Providers have some methods that don't take a resource as argument. They are
+usually shortcuts. As an example, ``ShProvider.run()`` is a shortcut that
+creates a ``ShCommand`` instance and runs it:
+
+.. doctest::
+
+   >>> session.sh.run('echo "Hello"')  # doctest: +ELLIPSIS
+   <xal.sh.resource.ShResult object at 0x...>
+
+System-level methods are described along with :doc:`/resources/index`, so that
+there is a single documentation page for each resource API.
+
+
+**********************************
+Providers implement resources' API
+**********************************
+
+Most of the methods of providers are implementation of resources' API which
+require interaction with the environment. Such methods take a resource as first
+positional argument.
+
+But in most situations (i.e. except you are developing a provider) you don't
+need to bother about such methods: just create resource instances as explained
+above, then use the resource instance's API, as described in
+:doc:`/resources/index`.

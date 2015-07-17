@@ -4,79 +4,26 @@ Overview
 
 This document introduces `xal`'s concepts.
 
+.. tip::
 
-*********
-Resources
-*********
+   `xal`'s primary concept is to develop to a session, i.e. have an unified API
+   to manage resources that can be applied relative to session objects. Then,
+   `xal` is a proof-of-concept implementation of this idea. So its internal
+   architecture may change (improve).
 
-`xal` resources are Python representations of system resources such as files,
-processes, users... One of `xal`'s main purpose is to define a consistent set
-of resources with a reference API.
+Here is a summary of `xal`'s internal architecture:
 
-.. note::
+* a :doc:`session </sessions>` holds a registry of resource providers.
+  Typically:
 
-   Implementation of resources is not `xal`'s main scope. `xal` focuses on API.
-   That said, as a proof of concept, `xal` implements some resource providers.
+  * in order to use `xal` or related libraries, you have to setup a session ;
 
-   **Work in progress!** The resources below are the ones currently implemented
-   in `xal`. Many resources have not been implemented yet. Learn more about
-   planned features in `bugtracker`_.
+  * in order to write `xal`-powered scripts or libraries, you receive session
+    instance as an input argument.
 
-There is a base class for all resources, then each resource has its own class.
+* a :doc:`resource provider </providers>` implements high-level resource
+  API for specific environment, typically using third-party libraries (stdlib,
+  Fabric, ...). A resource provider is also a resource factory.
 
-Here are resources provided by `xal` itself at the moment:
-
-* :doc:`/resources/fs`
-* :doc:`/resources/sh`
-
-
-********
-Sessions
-********
-
-In `xal`, sessions encapsulate implementation of resources APIs.
-
-Sessions hold a registry of providers. As an example, ``LocalSession().sh`` is
-mapped to :class:`~xal.sh.local.LocalShProvider`, which itself implements the
-:doc:`API for sh resources </resources/sh>`.
-
-Sessions are just routers that redirect calls to the right provider, as
-configured in registry.
-
-At the moment, `xal` provides a base :class:`~xal.session.Session` class, and,
-for convenience,two classes with pre-configured registries:
-
-* :class:`~xal.session.local.LocalSession` for use on localhost. Providers
-  basically use Python builtins.
-
-* :class:`~xal.session.local.FabricSession` for use on remote SSH sessions.
-  Providers use Fabric and Fabtools.
-
-.. warning::
-
-   Default ``pip install xal`` doesn't install specific dependencies for SSH or
-   local sessions. You need things like ``pip install xal[ssh]``.
-   See :doc:`/install` for details.
-
-
-******
-Client
-******
-
-Client is a special provider for `xal` sessions. Its primary purpose it to
-encapsulate connection with the system, hence the ``session.client.connect()``.
-
-
-*********
-Providers
-*********
-
-Typically, providers implement API of resources. Method signature usually take
-a resource instance as argument.
-
-
-.. rubric:: References
-
-.. target-notes::
-
-.. _`bugtracker`: https://github.com/benoitbryon/xal/issues
+* a :doc:`resource </resources/index>` instance describes an object of the
+  environment: a file, an user, ...

@@ -10,7 +10,7 @@ class FileSystem(Resource):
     def __init__(self, path, *args, **kwargs):
         super(FileSystem, self).__init__(*args, **kwargs)
         self.path = path
-        self.cwd_backup = None
+        self._exit_cwd = None
 
     def __enter__(self):
         return self
@@ -21,9 +21,9 @@ class FileSystem(Resource):
         return False
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        if self.cwd_backup:
-            self.xal_session.fs.cd(self.cwd_backup)
-        self.cwd_backup = None
+        if self._exit_cwd:
+            self.xal_session.fs.cd(self._exit_cwd)
+        self._exit_cwd = None
 
     def __str__(self):
         return str(self.path)
@@ -108,7 +108,7 @@ class Path(Resource):
         return path
 
     def __enter__(self):
-        pass
+        return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         # Restore working directory.
@@ -207,6 +207,10 @@ class Path(Resource):
     @property
     def stem(self):
         return self.pure_path.stem
+
+    def cd(self):
+        """Change working directory."""
+        return self.xal_session.fs.path.cd(self)
 
     def as_posix(self):
         return self.pure_path.as_posix()

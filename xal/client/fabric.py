@@ -19,5 +19,5 @@ class FabricClient(Client):
         return True
 
     def supports(self, session):
-        """Return True if session is local."""
+        """Return False if session is local."""
         return not session.is_local

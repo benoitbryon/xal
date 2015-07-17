@@ -2,72 +2,142 @@
 sh commands
 ###########
 
-`xal` provides an interface to run shell commands through ``sh``.
+`xal` provides an interface to run sh commands.
 
-.. tip::
+.. note::
 
-   With a local session, XAL is a convenient wrapper for :mod:`subprocess`.
+   `xal` doesn't pretend to be the best library to run sh commands. At the
+   moment, it focuses on providing a single API to execute sh commands in
+   various situations, such as on local machine or remote machine. If you like
+   the concept and want more features, let's `join the project`_!
 
 
-***********
-Basic usage
-***********
+****************
+Use sh interface
+****************
 
-In builtin `xal` sessions (:class:`~xal.session.local.LocalSession` and
-:class:`~xal.session.fabric.FabricSession`), there is a ``sh`` interface:
+Let's consider a `xal` :doc:`session </sessions>`:
 
-.. literalinclude:: /../tests/sh.py
-   :language: python
-   :pyobject: test_registry
+.. doctest::
+
+   >>> import xal
+   >>> session = xal.LocalSession()
+   >>> session.client.connect()
+   True
+
+Sh API is registered as ``sh`` in `xal`'s builtin :doc:`/sessions`:
+
+.. doctest::
+
+   >>> session.sh  # doctest: +ELLIPSIS
+   <xal.sh.local.LocalShProvider object at 0x...>
+
+
+***************
+Setup ShCommand
+***************
 
 The ``sh`` interface can be used as a factory to create
 :class:`~xal.sh.resource.ShCommand` resources:
 
-.. literalinclude:: /../tests/sh.py
-   :language: python
-   :pyobject: test_resource_factory
+.. doctest::
 
-Command resources are not executed automatically once created. First you
-configure them (arguments, pipes, ...), then you actually run them. You have to
-run them explicitely. They are callables. When called, they return a
-:class:`~xal.sh.resource.ShResult` instance:
+   >>> command = session.sh('echo -n Hello')
+   >>> command
+   ShCommand(echo -n Hello)
+   >>> print command
+   echo -n Hello
 
-.. literalinclude:: /../tests/sh.py
-   :language: python
-   :pyobject: test_basic_usage
+Command resources just describe commands. They are not executed automatically
+once created. They are not representing processes. Remember them as commands
+you prepare (arguments, stdout, stdin, stderr, pipes, ...) before you run them.
+
+Arguments
+=========
 
 Command constructor accepts strings or iterables:
 
-.. literalinclude:: /../tests/sh.py
-   :language: python
-   :pyobject: test_command_constructor
+.. doctest::
 
-The ``sh`` interface has a ``run()`` shortcut that creates and runs ``Cmd``
-instances:
+   >>> other_command = session.sh(['echo', '-n', 'Hello'])
+   >>> other_command.command
+   'echo -n Hello'
 
-.. literalinclude:: /../tests/sh.py
-   :language: python
-   :pyobject: test_run_shortcut
-
-
-*****
 Pipes
-*****
+=====
 
-You can create and handle pipes, they are commands too:
+You can create and handle pipes, they are commands too.
 
-.. literalinclude:: /../tests/sh.py
-   :language: python
-   :pyobject: test_pipes
+Let's consider two commands:
+
+.. doctest::
+
+   >>> echo = session.sh("echo -ne 'hello\nworld'")
+   >>> grep = session.sh("grep 'world'")
+
+We can chain them using :meth:`~xal.sh.resource.ShCommand.pipe` method or pipe
+operator:
+
+.. doctest::
+
+   >>> piped = echo.pipe(grep)
+   >>> piped().stdout
+   'world\n'
+
+   >>> piped = echo | grep
+   >>> piped().stdout
+   'world\n'
+
+It also works with ``run()`` shortcut:
+
+.. doctest::
+
+   >>> session.sh.run(echo | grep).stdout
+   'world\n'
+
+
+********************************
+Run ShCommand, retrieve ShResult
+********************************
+
+Command instances are callables. When called, they return a
+:class:`~xal.sh.resource.ShResult` instance:
+
+.. doctest::
+
+   >>> result = command()
+   >>> result  # doctest: +ELLIPSIS
+   <xal.sh.resource.ShResult object at 0x...>
+   >>> result.stdout
+   'Hello'
+   >>> result.return_code
+   0
+   >>> result.succeeded
+   True
+
+The ``sh`` interface also has a ``run()`` shortcut that creates
+:class:`ShCommand`, runs it and returns :class:`ShResult`:
+
+.. doctest::
+
+   >>> session.sh.run('echo -n Hello').stdout
+   'Hello'
 
 
 ***************************
 Differences with subprocess
 ***************************
 
-XAL's ``sh`` interface is made to run ``sh`` commands in a session.
+`xal`'s sh interface is made to run sh commands in a session.
 Think of the commands **always** run with ``sh -c``.
 Whereas Python's subprocess sets ``shell=False`` by default.
 
 This postulate influences design. XAL's sh interface helps you create and run
-commands through ``sh``: pipes, redirects...
+commands through sh: pipes, redirects...
+
+
+.. rubric:: References
+
+.. target-notes::
+
+.. _`join the project`: https://github.com/benoitbryon/xal/issues

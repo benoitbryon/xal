@@ -12,6 +12,27 @@ def test_registry(session):
     assert isinstance(session.fs.path, FileSystemProvider)
 
 
+def test_cd(session):
+    """``session.fs.path.cd()`` changes directory."""
+    initial_path = session.fs.path.cwd()
+    target_path = session.fs.path('tests/fixtures').resolve()
+    assert initial_path != target_path
+    with session.fs.path.cd(target_path) as reached_path:
+        assert session.fs.path.cwd() == target_path
+        assert target_path == reached_path
+    assert session.fs.path.cwd() == initial_path
+
+    # Also works without context manager.
+    # Notice that once used, paths are absolute.
+    target_path = session.fs.path('tests/fixtures')
+    assert not target_path.is_absolute()
+    reached_path = target_path.cd()
+    assert reached_path.is_absolute()
+
+    # Cleanup.
+    session.fs.path.cd(initial_path)
+
+
 def test_path_factory(session):
     """``fs.path`` is a factory for :class:`~xal.fs.resource.Path`."""
     from xal.fs.resource import Path

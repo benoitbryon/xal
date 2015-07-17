@@ -26,7 +26,7 @@ class FabricFileSystemProvider(FileSystemProvider):
 
     def cwd(self):
         """Return resource representing current working directory."""
-        local_path = fabric.api.run('pwd', quiet=True)
+        local_path = self.xal_session.sh.run('pwd').stdout.strip()
         return self(str(local_path))
 
     def cd(self, path):
@@ -34,9 +34,9 @@ class FabricFileSystemProvider(FileSystemProvider):
         local_path = self.resolve(path)
         # Remember initial path, for use at ``__exit__()``.
         new_path = self(str(local_path))
-        new_path.cwd_backup = self.cwd()
+        new_path._exit_cwd = self.cwd()
         # Actually change working directory.
-        fabric.api.env.cwd = str(local_path)
+        fabric.api.env.cwd = str(new_path)
         return new_path
 
     def exists(self, path):
