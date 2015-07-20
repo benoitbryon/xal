@@ -302,8 +302,3 @@ touch() returns Path instance
 
 pathlib.Path.touch() returns None, whereas xal's Path.touch() returns Path
 instance, so that calls can be chained.
-
-mkdir() as a context manager
-----------------------------
-
-with mkdir() block destroys created tree on exit. # TODO
