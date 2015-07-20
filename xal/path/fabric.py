@@ -1,4 +1,4 @@
-"""Implementation of SSH filesystem using Fabric."""
+"""Implementation of SSH filesystem path using Fabric."""
 from __future__ import absolute_import
 import pathlib
 import posix
@@ -9,21 +9,11 @@ import fabric.context_managers
 import fabric.contrib.files
 import fabtools
 
-from xal.fs.provider import FileSystemProvider
-from xal.fs.resource import Path
+from xal.path.provider import PathProvider
 
 
-class FabricFileSystemProvider(FileSystemProvider):
-    """Local filesystem manager."""
-    @property
-    def path(self):
-        try:
-            return self._path
-        except AttributeError:
-            self._path = FabricPathProvider()
-            self._path.xal_session = self.xal_session
-            return self._path
-
+class FabricPathProvider(PathProvider):
+    """SSH path manager."""
     def cwd(self):
         """Return resource representing current working directory."""
         local_path = self.xal_session.sh.run('pwd').stdout.strip()
@@ -95,8 +85,8 @@ class FabricFileSystemProvider(FileSystemProvider):
             'rm -r "{path}"'.format(path=str(local_path)))
 
     def supports(self, session):
-        """Return False if session is local."""
-        return not session.is_local
+        """Return False if session has no sh interface."""
+        return session.sh.supports(session)
 
     def stat(self, path):
         """Return stat result."""
@@ -242,12 +232,3 @@ class FabricFileSystemProvider(FileSystemProvider):
         with fabric.context_managers.hide('running', 'stdout', 'stderr'):
             fabtools.files.remove(unicode(local_path))
         return None
-
-
-class FabricPathProvider(FabricFileSystemProvider):
-    def __init__(self, resource_factory=Path):
-        super(FabricPathProvider, self).__init__(
-            resource_factory=resource_factory)
-
-    def supports(self, session):
-        return not session.is_local

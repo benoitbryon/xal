@@ -33,7 +33,7 @@ True
 
 In this session, we can manage files:
 
->>> path = local_session.fs.path('hello-xal.txt')
+>>> path = local_session.path('hello-xal.txt')
 >>> path.exists()
 False
 >>> written = path.open('w').write(u'Hello world!')
@@ -56,7 +56,7 @@ Now let's make a function that does the same. It takes the session as input
 argument:
 
 >>> def hello(session):
-...     path = session.fs.path('hello-xal.txt')
+...     path = session.path('hello-xal.txt')
 ...     path.open('w').write(u"Hello world!")
 ...     print path.open().read()
 ...     path.unlink()

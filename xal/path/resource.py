@@ -1,76 +1,9 @@
 # -*- coding: utf-8 -*-
-"""Filesystem directory resource."""
+"""Filesystem path resource."""
 from __future__ import division
 import pathlib
 
 from xal.resource import Resource
-
-
-class FileSystem(Resource):
-    def __init__(self, path, *args, **kwargs):
-        super(FileSystem, self).__init__(*args, **kwargs)
-        self.path = path
-        self._exit_cwd = None
-
-    def __enter__(self):
-        return self
-
-    def __eq__(self, other):
-        if self.xal_session == other.xal_session:
-            return str(self) == str(other)
-        return False
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        if self._exit_cwd:
-            self.xal_session.fs.cd(self._exit_cwd)
-        self._exit_cwd = None
-
-    def __str__(self):
-        return str(self.path)
-
-    def cd(self):
-        """Change working directory."""
-        return self.xal_session.fs.cd(self)
-
-    @property
-    def exists(self):
-        return self.xal_session.fs.exists(self)
-
-    def is_absolute(self):
-        """Return ``True`` if path is absolute."""
-        return self.xal_session.fs.is_absolute(self)
-
-    def is_dir(self):
-        return self.xal_session.fs.is_dir(self)
-
-    def is_file(self):
-        return self.xal_session.fs.is_file(self)
-
-    def is_relative(self):
-        """Return ``True`` if path is relative."""
-        return not self.is_absolute()
-
-    def mkdir(self, mode=0o777, parents=False):
-        """Create directory."""
-        return self.xal_session.fs.mkdir(self, mode=mode, parents=parents)
-
-    @property
-    def name(self):
-        return self.xal_session.fs.name(self)
-
-    @property
-    def parent(self):
-        return self.xal_session.fs.parent(self)
-
-    def resolve(self):
-        return self.xal_session.fs.resolve(self)
-
-    def rm(self):
-        """Delete resource from filesystem (recursively for directories)."""
-        return self.xal_session.fs.rm(self)
-
-    def status(self):
-        return {'exists': self.exists}
 
 
 class Path(Resource):
@@ -113,7 +46,7 @@ class Path(Resource):
     def __exit__(self, exc_type, exc_val, exc_tb):
         # Restore working directory.
         if self._exit_cwd:
-            self.xal_session.fs.cd(self._exit_cwd)
+            self.xal_session.path.cd(self._exit_cwd)
         # Destroy temporary directory.
         if self._exit_rm:
             if self.is_absolute():
@@ -210,7 +143,7 @@ class Path(Resource):
 
     def cd(self):
         """Change working directory."""
-        return self.xal_session.fs.path.cd(self)
+        return self.xal_session.path.cd(self)
 
     def as_posix(self):
         return self.pure_path.as_posix()
@@ -250,56 +183,56 @@ class Path(Resource):
         return other_path
 
     def stat(self):
-        return self.xal_session.fs.path.stat(self)
+        return self.xal_session.path.stat(self)
 
     def chmod(self, mode):
-        return self.xal_session.fs.path.chmod(self, mode)
+        return self.xal_session.path.chmod(self, mode)
 
     def exists(self):
-        return self.xal_session.fs.path.exists(self)
+        return self.xal_session.path.exists(self)
 
     def glob(self, pattern):
-        return self.xal_session.fs.path.glob(self, pattern)
+        return self.xal_session.path.glob(self, pattern)
 
     def group(self):
-        return self.xal_session.fs.path.group(self)
+        return self.xal_session.path.group(self)
 
     def is_dir(self):
-        return self.xal_session.fs.path.is_dir(self)
+        return self.xal_session.path.is_dir(self)
 
     def is_file(self):
-        return self.xal_session.fs.path.is_file(self)
+        return self.xal_session.path.is_file(self)
 
     def is_symlink(self):
-        return self.xal_session.fs.path.is_symlink(self)
+        return self.xal_session.path.is_symlink(self)
 
     def is_socket(self):
-        return self.xal_session.fs.path.is_socket(self)
+        return self.xal_session.path.is_socket(self)
 
     def is_fifo(self):
-        return self.xal_session.fs.path.is_fifo(self)
+        return self.xal_session.path.is_fifo(self)
 
     def is_block_device(self):
-        return self.xal_session.fs.path.is_block_device(self)
+        return self.xal_session.path.is_block_device(self)
 
     def is_char_device(self):
-        return self.xal_session.fs.path.is_char_device(self)
+        return self.xal_session.path.is_char_device(self)
 
     def iterdir(self):
-        return self.xal_session.fs.path.iterdir(self)
+        return self.xal_session.path.iterdir(self)
 
     def lchmod(self, mode):
-        return self.xal_session.fs.path.lchmod(self, mode)
+        return self.xal_session.path.lchmod(self, mode)
 
     def lstat(self):
-        return self.xal_session.fs.path.lstat(self)
+        return self.xal_session.path.lstat(self)
 
     def mkdir(self, mode=0o777, parents=False):
-        return self.xal_session.fs.path.mkdir(self, mode=mode, parents=parents)
+        return self.xal_session.path.mkdir(self, mode=mode, parents=parents)
 
     def open(self, mode='r', buffering=-1, encoding=None, errors=None,
              newline=None):
-        return self.xal_session.fs.path.open(
+        return self.xal_session.path.open(
             self,
             mode=mode,
             buffering=buffering,
@@ -309,116 +242,40 @@ class Path(Resource):
         )
 
     def owner(self):
-        return self.xal_session.fs.path.owner(self)
+        return self.xal_session.path.owner(self)
 
     def rename(self, target):
         other_path = self._cast(target)
-        result = self.xal_session.fs.path.rename(self, other_path)
+        result = self.xal_session.path.rename(self, other_path)
         self.pure_path = other_path.pure_path
         return result
 
     def replace(self, target):
         other_path = self._cast(target)
-        result = self.xal_session.fs.path.replace(self, other_path)
+        result = self.xal_session.path.replace(self, other_path)
         self.pure_path = other_path.pure_path
         return result
 
     def resolve(self):
-        return self.xal_session.fs.path.resolve(self)
+        return self.xal_session.path.resolve(self)
 
     def rglob(self, pattern):
-        return self.xal_session.fs.path.rglob(self, pattern)
+        return self.xal_session.path.rglob(self, pattern)
 
     def rmdir(self):
-        return self.xal_session.fs.path.rmdir(self)
+        return self.xal_session.path.rmdir(self)
 
     def symlink_to(self, target, target_is_directory=False):
-        return self.xal_session.fs.path.symlink_to(
+        return self.xal_session.path.symlink_to(
             self,
             target=target,
             target_is_directory=target_is_directory)
 
     def touch(self, mode=0o777, exist_ok=True):
-        return self.xal_session.fs.path.touch(
+        return self.xal_session.path.touch(
             self,
             mode=mode,
             exist_ok=exist_ok)
 
     def unlink(self):
-        return self.xal_session.fs.path.unlink(self)
-
-
-"""
-class Path(Resource):
-    # Properties from pathlib.PurePath
-    drive
-    root
-    anchor
-    parents
-    parent
-    name
-    suffix
-    suffixes
-    stem
-    # Methods from pathlib.PurePath
-    __div__(self, other):
-    __truediv__(self, other):
-    __str__(self):
-    __unicode__(self):
-    __bytes__(self):
-    as_posix(self):
-    as_uri(self):
-    is_absolute(self):
-    is_reserved(self):
-    joinpath(self, *other):
-    match(self, pattern):
-    relative_to(self, *other):
-    with_name(self, name):
-    with_suffix(self, suffix):
-    # Methods from pathlib.Path
-    @classmethod cwd(cls)
-    stat(self):
-    chmod(self, mode):
-    exists(self):
-    glob(self, pattern):
-    is_dir(self):
-    is_file(self):
-    is_symlink(self):
-    is_socket(self):
-    is_fifo(self):
-    is_block_device(self):
-    is_char_device(self):
-    iterdir(self):
-    lchmod(self):
-    lstat(self):
-    mkdir(self, mode=0o777, parents=False):
-    open(self, mode='r', buffering=-1, encoding=None, errors=None,
-         newline=None):
-    owner(self):
-    rename(self, target):
-    replace(self, target):
-    resolve(self):
-    rglob(self, pattern):
-    rmdir(self):
-    symlink_to(self, target, target_is_directory=False):
-    touch(self, mode=0o777, exist_ok=True):
-    unlink(self):
-
-
-class Directory(Resource):
-    # Properties
-    path
-    # Methods
-    __iter__(self):
-    read(self):
-
-
-class File(Resource):
-    # Properties
-    path
-    # Methods
-    read()
-    seek()
-    open()
-    close()
-"""
+        return self.xal_session.path.unlink(self)

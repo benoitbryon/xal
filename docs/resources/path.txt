@@ -13,13 +13,13 @@ Paths, files and directories
 
    import xal
    session = xal.LocalSession()
-   here = session.fs.path.cwd()
+   here = session.path.cwd()
    assert here.name == 'docs'  # Don't mess up unsupported environments!
-   session.fs.path.cd(here.parent)  # Move to repository root.
+   session.path.cd(here.parent)  # Move to repository root.
 
 
 *********************
-Use fs.path interface
+Use path interface
 *********************
 
 Let's consider a `xal` :doc:`session </sessions>`:
@@ -31,38 +31,34 @@ Let's consider a `xal` :doc:`session </sessions>`:
    >>> session.client.connect()
    True
 
-Path API is registered as ``fs.path`` in `xal`'s builtin :doc:`/sessions`:
+Path API is registered as ``path`` in `xal`'s builtin :doc:`/sessions`:
 
 .. doctest::
 
-   >>> session.fs.path  # doctest: +ELLIPSIS
-   <xal.fs.local.LocalPathProvider object at 0x...>
-
-.. note::
-
-   ``fs.path`` may be renamed to ``path`` in future releases.
+   >>> session.path  # doctest: +ELLIPSIS
+   <xal.path.local.LocalPathProvider object at 0x...>
 
 
 ****************
 PathProvider API
 ****************
 
-Here are details about `xal`'s ``fs.path`` interface.
+Here are details about `xal`'s ``path`` interface.
 
 Path resource factory
 =====================
 
-The ``fs.path`` interface can be used as a factory to create
-:class:`~xal.fs.resource.Path` resources:
+The ``path`` interface can be used as a factory to create
+:class:`~xal.path.resource.Path` resources:
 
 .. doctest::
 
-   >>> path = session.fs.path('tests/fixtures')
+   >>> path = session.path('tests/fixtures')
    >>> path
    Path('tests/fixtures')
 
 See section about `path objects <#path-objects>`_ below for details about
-:class:`~xal.fs.resource.Path` instances.
+:class:`~xal.path.resource.Path` instances.
 
 cd(path)
 ========
@@ -73,24 +69,24 @@ It can be used as a context manager:
 
 .. doctest::
 
-   >>> former_path = session.fs.path.cwd()
-   >>> with session.fs.path.cd('tests') as new_path:
-   ...     session.fs.path.cwd() == new_path
+   >>> former_path = session.path.cwd()
+   >>> with session.path.cd('tests') as new_path:
+   ...     session.path.cwd() == new_path
    True
-   >>> session.fs.path.cwd() == former_path
+   >>> session.path.cwd() == former_path
    True
 
 Or standalone:
 
 .. doctest::
 
-   >>> former_path = session.fs.path.cwd()
-   >>> session.fs.path.cd('tests')  # doctest: +ELLIPSIS
+   >>> former_path = session.path.cwd()
+   >>> session.path.cd('tests')  # doctest: +ELLIPSIS
    Path('/.../tests')
 
 Accepts text or path objects:
 
-   >>> session.fs.path.cd(former_path)  # doctest: +ELLIPSIS
+   >>> session.path.cd(former_path)  # doctest: +ELLIPSIS
    Path('/...')
 
 .. note::
@@ -107,7 +103,7 @@ In local session, it is obviously the same value as :attr:`os.path.sep`:
 .. doctest::
 
    >>> import os
-   >>> session.fs.path.sep == os.path.sep
+   >>> session.path.sep == os.path.sep
    True
 
 pure_path(path)
@@ -119,9 +115,9 @@ situations where you need to compare paths on `pure path
 
 .. doctest::
 
-   >>> session.fs.path('foo').xal_session is session
+   >>> session.path('foo').xal_session is session
    True
-   >>> session.fs.path.pure_path('foo').xal_session is None
+   >>> session.path.pure_path('foo').xal_session is None
    True
 
 
@@ -129,12 +125,12 @@ situations where you need to compare paths on `pure path
 Path objects
 ************
 
-The ``fs.path`` interface can be used as a factory to create
-:class:`~xal.fs.resource.Path` resources:
+The ``path`` interface can be used as a factory to create
+:class:`~xal.path.resource.Path` resources:
 
 .. doctest::
 
-   >>> path = session.fs.path('tests/fixtures')
+   >>> path = session.path('tests/fixtures')
    >>> path
    Path('tests/fixtures')
    >>> print path
@@ -145,7 +141,7 @@ path objects themselves:
 
 .. doctest::
 
-   >>> session.fs.path(session.fs.path('foo'))
+   >>> session.path(session.path('foo'))
    Path('foo')
 
 Pure paths VS concrete paths
@@ -158,7 +154,7 @@ paths":
 
   .. doctest::
 
-     >>> path = session.fs.path.pure_path('foo')
+     >>> path = session.path.pure_path('foo')
      >>> path.xal_session is None
      True
 
@@ -166,7 +162,7 @@ paths":
 
   .. doctest::
 
-     >>> path = session.fs.path('foo')
+     >>> path = session.path('foo')
      >>> path.xal_session is session
      True
 
@@ -178,19 +174,19 @@ concrete paths:
 
 .. doctest::
 
-   >>> session.fs.path.pure_path('foo') == session.fs.path.pure_path('foo')
+   >>> session.path.pure_path('foo') == session.path.pure_path('foo')
    True
-   >>> session.fs.path.pure_path('foo') == session.fs.path('foo')
+   >>> session.path.pure_path('foo') == session.path('foo')
    True
 
 Concrete paths are compared with respect to session:
 
 .. doctest::
 
-   >>> session.fs.path('foo') == session.fs.path('foo')
+   >>> session.path('foo') == session.path('foo')
    True
    >>> remote_session = xal.FabricSession()
-   >>> session.fs.path('foo') == remote_session.fs.path('foo')
+   >>> session.path('foo') == remote_session.path('foo')
    False
 
 Concatenation
@@ -200,7 +196,7 @@ Use slash (division) operator ``/`` to concatenate paths:
 
 .. doctest::
 
-   >>> session.fs.path('foo') / session.fs.path('bar')
+   >>> session.path('foo') / session.path('bar')
    Path('foo/bar')
 
 Properties
@@ -210,7 +206,7 @@ Properties
 
 .. doctest::
 
-   >>> path = session.fs.path('/home/user/hello.txt.cpold')
+   >>> path = session.path('/home/user/hello.txt.cpold')
    >>> path.drive
    ''
    >>> path.root
@@ -288,7 +284,7 @@ cwd()
 
 :mod:`pathlib` implements ``cwd()`` as a class-level method of ``Path``. In
 `xal`, it is a method of the instance of provider API, generally
-``session.fs.cwd()``.
+``session.path.cwd()``.
 
 resolve() works with non-existent files
 ---------------------------------------

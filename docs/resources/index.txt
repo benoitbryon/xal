@@ -10,7 +10,7 @@ There is a base class for all resources, then each resource has its own class.
 
 Here are resources provided by `xal` itself at the moment:
 
-* :doc:`/resources/fs`
+* :doc:`/resources/path`
 * :doc:`/resources/sh`
 
 .. note::

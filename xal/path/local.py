@@ -1,4 +1,4 @@
-"""Implementation of local filesystem management.
+"""Implementation of local path management.
 
 Mostly wrappers around Python builtins: pathlib, os, os.path, shutil...
 
@@ -7,21 +7,11 @@ import os
 import pathlib
 import shutil
 
-from xal.fs.provider import FileSystemProvider
-from xal.fs.resource import Path
+from xal.path.provider import PathProvider
 
 
-class LocalFileSystemProvider(FileSystemProvider):
-    """Local filesystem manager."""
-    @property
-    def path(self):
-        try:
-            return self._path
-        except AttributeError:
-            self._path = LocalPathProvider()
-            self._path.xal_session = self.xal_session
-            return self._path
-
+class LocalPathProvider(PathProvider):
+    """Local path manager."""
     def cwd(self):
         """Return resource representing current working directory."""
         return self(str(pathlib.Path.cwd()))
@@ -194,12 +184,3 @@ class LocalFileSystemProvider(FileSystemProvider):
     def unlink(self, path):
         local_path = pathlib.Path(str(path))
         return local_path.unlink()
-
-
-class LocalPathProvider(LocalFileSystemProvider):
-    def __init__(self, resource_factory=Path):
-        super(LocalPathProvider, self).__init__(
-            resource_factory=resource_factory)
-
-    def supports(self, session):
-        return session.is_local

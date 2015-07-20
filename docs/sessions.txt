@@ -101,7 +101,7 @@ instance acts as a router to adequate item in registry.
    >>> session.registry  # doctest: +ELLIPSIS
    <xal.registry.Registry object at 0x...>
    >>> sorted(session.registry.items.keys())
-   ['client', 'dir', 'fs', 'sh', 'sys']
+   ['client', 'dir', 'path', 'sh', 'sys']
    >>> session.registry('sh')  # doctest: +ELLIPSIS
    <xal.sh.local.LocalShProvider object at 0x...>
    >>> session.sh is session.registry('sh')
@@ -125,17 +125,17 @@ But, if you are curious, here are some hints:
   As an example, Fabric-based implementation of path API uses session's sh
   API via ``self.xal_session.sh``:
 
-  .. literalinclude:: /../xal/fs/fabric.py
+  .. literalinclude:: /../xal/path/fabric.py
      :language: python
-     :pyobject: FabricFileSystemProvider.cwd
+     :pyobject: FabricPathProvider.cwd
 
 * when providers instanciate a ressource, they assign a reference to the
   session as ``xal_session`` attribute. It makes it possible to have generic
   resource classes that take advantage of providers' specific implementation.
 
   As an example, Path resource is generic, but most methods just redirect to
-  ``self.xal_session.fs.path`` with ``self`` as first argument:
+  ``self.xal_session.path`` with ``self`` as first argument:
 
-  .. literalinclude:: /../xal/fs/resource.py
+  .. literalinclude:: /../xal/path/resource.py
      :language: python
      :pyobject: Path.chmod

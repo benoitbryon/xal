@@ -17,14 +17,14 @@ class LocalSession(Session):
         # Let's import providers then register them to interfaces.
         from xal.client.local import LocalClient
         from xal.dir.local import LocalDirProvider
-        from xal.fs.local import LocalFileSystemProvider
+        from xal.path.local import LocalPathProvider
         from xal.sh.local import LocalShProvider
         from xal.sys.local import LocalSysProvider
 
         self.registry.register(
             client=LocalClient(),
             dir=LocalDirProvider(),
-            fs=LocalFileSystemProvider(),
+            path=LocalPathProvider(),
             sh=LocalShProvider(),
             sys=LocalSysProvider(),
         )

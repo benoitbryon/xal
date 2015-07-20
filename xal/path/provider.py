@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-"""Base stuff for providers that handle filesystem."""
+"""Base stuff for providers that handle Path objects (pathlib API)."""
 from xal.provider import ResourceProvider
-from xal.fs.resource import FileSystem
+from xal.path.resource import Path
 
 
-class FileSystemProvider(ResourceProvider):
-    """Base class for filesystems."""
-    def __init__(self, resource_factory=FileSystem):
-        super(FileSystemProvider, self).__init__(
+class PathProvider(ResourceProvider):
+    """Base class for paths."""
+    def __init__(self, resource_factory=Path):
+        super(PathProvider, self).__init__(
             resource_factory=resource_factory)
 
     @property

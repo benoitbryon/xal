@@ -13,7 +13,7 @@ Contents
    sessions
    providers
    resources/index
-   resources/fs
+   resources/path
    resources/sh
    about/index
    presentations/index
