@@ -5,16 +5,27 @@ Changelog
 0.2 (unreleased)
 ----------------
 
-- Nothing changed yet.
+Still a proof of concept. Main features: pathlib interface, local and fabric
+sessions.
+
+- Feature #3 - Introduced support of SSH session using Fabric.
+
+- Feature #5 - LocalSession and FabricSession have a pathlib implementation.
+
+- Improved documentation.
 
 
 0.1 (2013-07-06)
 ----------------
 
+Initial release as a proof of concept. Main feature: sh interface.
+
 - Feature #6 - Introduced proof of concept implementation of ``sh`` interface.
   Using a basic implementation for local session, based on subprocess.
+
 - Feature #7 - Proof of concept implementation of ``dir`` interface, with a
   basic implementation for local session based on Python builtins (os, os.path,
   ...).
+
 - Feature #8 - Introduced contextual execution architecture: session, registry,
   providers, resources, client.
