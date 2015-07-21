@@ -21,20 +21,18 @@ Standalone
 **********
 
 In order to use `xal` in interactive Python shells or in standalone scripts,
-you can install `xal` directly with your favorite Python package manager. As an
+you can install it directly with your favorite Python package manager. As an
 example with `pip`_:
 
 .. code:: sh
 
-   pip install xal
+   pip install xal[local,ssh]
 
-Depending on the kind of sessions you need, install additional dependencies:
+.. tip::
 
-.. code:: sh
-
-   pip install xal[local]  # For local sessions.
-   pip install xal[ssh]  # For SSH sessions.
-   pip install xal[local,ssh]  # For both local and SSH sessions.
+   If you don't need all types of sessions, you can install only a subset of
+   `xal`'s dependencies, i.e. run either ``pip install xal[local]`` or
+   ``pip install xal[ssh]``.
 
 
 ************
@@ -42,7 +40,7 @@ As a library
 ************
 
 In order to use `xal` as a dependency of another project, you should add
-``xal`` to the requirements of your main project. Typically in
+``xal[local,ssh]`` to the requirements of your main project. Typically in
 :file:`setup.py`:
 
 .. code:: python
@@ -51,7 +49,7 @@ In order to use `xal` as a dependency of another project, you should add
 
    setup(
        install_requires=[
-           'xal',
+           'xal[local,ssh]',
            #...
        ]
        # ...
@@ -59,6 +57,11 @@ In order to use `xal` as a dependency of another project, you should add
 
 Then when you install your main project with your favorite package manager
 (like `pip`_), `xal` will automatically be installed.
+
+.. tip::
+
+   If you don't need all types of sessions, you can require only a subset of
+   `xal`'s dependencies, i.e. declare either ``xal[local]`` or ``xal[ssh]``.
 
 
 *****

@@ -5,7 +5,11 @@ Changelog
 0.3 (unreleased)
 ----------------
 
-- Nothing changed yet.
+Simplify first steps with `xal`.
+
+- Feature #12 - First explain how to install xal with full features, then
+  mention ability to install with restricted set of dependencies (was
+  restricted install first).
 
 
 0.2 (2015-07-21)

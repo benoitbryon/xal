@@ -303,10 +303,10 @@ def test_mkdir(session):
 
 def test_open(session):
     """``Path`` instances implement open()."""
-    import xal
-    assert session.path('VERSION').open().read().strip() == xal.__version__
-    with session.path('VERSION').open() as resource:
-        assert resource.read() == '0.2.dev0\n'
+    hello = open('tests/fixtures/hello.txt').read()
+    assert session.path('tests/fixtures/hello.txt').open().read() == hello
+    with session.path('tests/fixtures/hello.txt').open() as resource:
+        assert resource.read() == hello
 
 
 def test_owner(session):
