@@ -11,6 +11,10 @@ Simplify first steps with `xal`.
   mention ability to install with restricted set of dependencies (was
   restricted install first).
 
+- Feature #13 - Session initialization calls client.connect(). Session
+  constructor's signature changed, making usage of sessions more
+  straightforward.
+
 
 0.2 (2015-07-21)
 ----------------

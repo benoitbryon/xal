@@ -28,8 +28,6 @@ Let's initialize a session on local system:
 
 >>> import xal
 >>> local_session = xal.LocalSession()
->>> local_session.client.connect()
-True
 
 In this session, we can manage files:
 
@@ -72,9 +70,7 @@ Goodbye!
 What's nice is that we can reuse the same function in another session. Let's
 create a remote SSH session using Fabric...
 
->>> remote_session = xal.FabricSession()
->>> remote_session.client.connect(host='localhost')
-True
+>>> remote_session = xal.FabricSession(host='localhost')
 
 ... then just run the same function with this remote session:
 

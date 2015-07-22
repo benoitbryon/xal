@@ -28,8 +28,6 @@ Let's consider a `xal` :doc:`session </sessions>`:
 
    >>> import xal
    >>> session = xal.LocalSession()
-   >>> session.client.connect()
-   True
 
 Path API is registered as ``path`` in `xal`'s builtin :doc:`/sessions`:
 
@@ -185,7 +183,7 @@ Concrete paths are compared with respect to session:
 
    >>> session.path('foo') == session.path('foo')
    True
-   >>> remote_session = xal.FabricSession()
+   >>> remote_session = xal.FabricSession(host='localhost')
    >>> session.path('foo') == remote_session.path('foo')
    False
 
