@@ -15,8 +15,7 @@ def session(request):
     if request.param == 'local':
         xal_session = xal.LocalSession()
     elif request.param == 'fabric':
-        xal_session = xal.FabricSession()
-        xal_session.client.connect('localhost')
+        xal_session = xal.FabricSession(host='localhost')
     context = xal_session.path.cd(here)
     context.__enter__()
     return xal_session

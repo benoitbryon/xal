@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Base stuff for XAL sessions."""
+from xal.registry import Registry
 
 
 class Session(object):
@@ -10,14 +11,14 @@ class Session(object):
     requests to the system.
 
     """
-    def __init__(self, registry=None):
+    def __init__(self):
         """Constructor."""
         #: Mapping between identifiers and actual provider instances.
         #:
         #: The registry itself if a special kind of provider.
         #: Every client should have at least one provider identified by
         #: "registry".
-        self.registry = registry
+        self.registry = Registry()
 
         # Attach session to registry for reverse relationship.
         self.registry.xal_session = self

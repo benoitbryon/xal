@@ -22,8 +22,6 @@ Let's consider a `xal` :doc:`session </sessions>`:
 
    >>> import xal
    >>> session = xal.LocalSession()
-   >>> session.client.connect()
-   True
 
 Sh API is registered as ``sh`` in `xal`'s builtin :doc:`/sessions`:
 

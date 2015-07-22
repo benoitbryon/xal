@@ -11,16 +11,13 @@ Quickstart
 
 In order to use `xal` or related libraries:
 
-1. Setup session instance
-2. Log in session
+1. Create session instance
 3. Use session's interfaces, a.k.a. :doc:`/resources/index`
 
 .. doctest::
 
    >>> import xal
    >>> session = xal.LocalSession()
-   >>> session.client.connect()
-   True
    >>> session.sh.run('echo -n "Hello"').stdout
    'Hello'
 
@@ -43,13 +40,12 @@ At the moment, `xal` provides two pre-configured session classes:
 * :class:`~xal.session.local.LocalSession` for use on localhost. Basically uses
   Python builtins.
 
-  Client's ``connect()`` method takes no arguments:
+  Initialization method takes no arguments:
 
   .. doctest::
 
-     >>> local_session = xal.LocalSession()
-     >>> local_session.client.connect()
-     True
+     >>> xal.LocalSession()  # doctest: +ELLIPSIS
+     <xal.session.local.LocalSession object at 0x...>
 
 * :class:`~xal.session.local.FabricSession` for use on remote SSH sessions.
   Uses Fabric and Fabtools.
@@ -59,9 +55,8 @@ At the moment, `xal` provides two pre-configured session classes:
 
   .. doctest::
 
-     >>> fabric_session = xal.FabricSession()
-     >>> fabric_session.client.connect(host='localhost')
-     True
+     >>> xal.FabricSession(host='localhost')
+     <xal.session.fabric.FabricSession object at 0x...>
 
 
 .. warning::
@@ -76,7 +71,8 @@ Client
 ******
 
 Client is a special provider for `xal` sessions. Its primary purpose it to
-encapsulate connection with the system, hence the ``session.client.connect()``.
+encapsulate connection with the system. At initialization, session do an
+implicit call to the client's ``connect()`` method.
 
 What's make "client" interface special is that the signature of ``connect()``
 method is specific to providers.
